@@ -1,0 +1,19 @@
+services:
+  #  spring-app:
+
+  database:
+    image: mysql
+    restart: always
+    ports:
+      - 3306:3306
+    command: --init-file /data/application/init.sql
+    environment:
+      MYSQL_DATABASE: boki_portfolio
+      MYSQL_ROOT_PASSWORD: 1234
+      TZ: Asia/Seoul
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/data/application/init.sql
+
+volumes:
+  mysql-data:
