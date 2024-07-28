@@ -1,3 +1,7 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+import java.text.SimpleDateFormat
+import java.util.*
+
 plugins {
     id("org.springframework.boot") version "3.3.2"
     id("io.spring.dependency-management") version "1.1.6"
@@ -17,6 +21,12 @@ java {
 
 repositories {
     mavenCentral()
+}
+
+allOpen {
+    annotation("jakarta.persistence.Entity")
+    annotation("jakarta.persistence.MappedSuperclass")
+    annotation("jakarta.persistence.Embeddable")
 }
 
 dependencies {
@@ -43,4 +53,14 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.getByName<BootJar>("bootJar") {
+    val dateFormat = SimpleDateFormat("yyMMdd_HHmm")
+    archiveFileName.set("${project.name}-${dateFormat.format(Date())}_${project.version}.jar")
+    enabled = true
+}
+
+tasks.getByName<Jar>("jar") {
+    enabled = false
 }
