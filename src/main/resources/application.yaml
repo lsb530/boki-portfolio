@@ -1,3 +1,6 @@
 spring:
   application:
     name: boki-portfolio
+  profiles:
+    active: dev
+    include: datasource, jpa, logging

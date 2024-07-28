@@ -1,0 +1,26 @@
+logging:
+  level:
+    root: info
+    org:
+      springframework.web: debug
+      hibernate: error
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+logging:
+  level:
+    root: debug
+    org:
+      springframework: debug
+      springframework.web: debug
+      hibernate:
+        SQL: debug
+        type:
+          descriptor:
+            sql:
+              BasicBinder: trace

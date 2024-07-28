@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    hikari:
+      connection-timeout: 30000 # 30초
+      validation-timeout: 30000 # 30초
+      idle-timeout: 600000 # 10분
+      max-lifetime: 1800000 # 30분
+      maximum-pool-size: 10
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        rewriteBatchedStatements: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
+    type: com.zaxxer.hikari.HikariDataSource
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/boki_portfolio
+    username: root
+    password: 1234
