@@ -1,6 +1,16 @@
 services:
   #  spring-app:
 
+ # https://hub.docker.com/r/bitnami/minio
+ # https://github.com/bitnami/containers/blob/main/bitnami/minio/docker-compose.yml
+  minio:
+    image: docker.io/bitnami/minio:2024
+    ports:
+      - '9000:9000'
+      - '9001:9001'
+    volumes:
+      - 'minio_data:/bitnami/minio/data'
+
   database:
     image: mysql
     restart: always
@@ -17,3 +27,5 @@ services:
 
 volumes:
   mysql-data:
+  minio_data:
+    driver: local
