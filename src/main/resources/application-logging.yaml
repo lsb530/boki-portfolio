@@ -18,6 +18,7 @@ logging:
     org:
       springframework: info
       springframework.web: debug
+      springframework.boot.autoconfigure.security: warn
       hibernate:
         SQL: debug
         type:
