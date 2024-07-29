@@ -23,7 +23,7 @@ class User(
     @Column(nullable = false, unique = false)
     var name: String,
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = false)
     var password: String,
 ) : AuditEntity() {
 
