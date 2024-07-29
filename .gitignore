@@ -41,3 +41,6 @@ out/
 
 ### MocOS ###
 .DS_Store
+
+### AspectJ core dump ###
+ajcore.*
