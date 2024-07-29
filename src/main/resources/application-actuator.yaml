@@ -1,0 +1,14 @@
+management:
+  server:
+    port: 9090
+  endpoints:
+    jmx:
+      exposure:
+        exclude: "*"
+    web:
+      base-path: /management
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-components: always
