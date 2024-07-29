@@ -18,7 +18,7 @@ class User(
     val email: String,
 
     @Column(nullable = false, unique = true)
-    val phone: String,
+    val phoneNumber: String,
 
     @Column(nullable = false, unique = false)
     var name: String,
@@ -28,11 +28,11 @@ class User(
 ) : AuditEntity() {
 
     companion object {
-        fun createUser(email: String, userId: String, phone: String, name: String, password: String): User {
+        fun createUser(email: String, userId: String, phoneNumber: String, name: String, password: String): User {
             return User(
                 email = email,
                 userId = userId,
-                phone = phone,
+                phoneNumber = phoneNumber,
                 name = name,
                 password = password
             )
