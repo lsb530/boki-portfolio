@@ -1,5 +1,7 @@
 package boki.bokiportfolio.dto
 
+import boki.bokiportfolio.entity.User
+import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.regex.Pattern
 
 data class UserRegisterRequest(
@@ -15,6 +17,11 @@ data class UserRegisterRequest(
         require(isValidUserId(userId)) { "잘못된 아이디 형식입니다" }
         require(isValidName(name)) { "잘못된 이름 형식입니다" }
         require(isValidPassword(password)) { "잘못된 비밀번호 형식입니다" }
+    }
+
+    fun toEntity(passwordEncoder: PasswordEncoder): User {
+        val encodedPassword = passwordEncoder.encode(password)
+        return User.createUser(email, userId, phoneNumber, name, encodedPassword)
     }
 
     private fun isValidEmail(email: String): Boolean {
@@ -40,5 +47,25 @@ data class UserRegisterRequest(
     private fun isValidPassword(password: String): Boolean {
         val passwordRegex = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@\$!#%^&*].*[@\$!#%^&*])[A-Za-z\\d@\$!#%^&*]{7,}$"
         return Pattern.compile(passwordRegex).matcher(password).matches()
+    }
+}
+
+data class UserResponse(
+    val id: Long,
+    val userId: String,
+    val email: String,
+    val phoneNumber: String,
+    val name: String,
+) {
+    companion object {
+        fun from(user: User): UserResponse {
+            return UserResponse(
+                id = user.id!!,
+                userId = user.userId,
+                email = user.email,
+                phoneNumber = user.phoneNumber,
+                name = user.name
+            )
+        }
     }
 }
