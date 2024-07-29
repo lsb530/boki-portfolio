@@ -30,6 +30,7 @@ allOpen {
 }
 
 val jwtVersion = "0.12.6"
+val swaggerUiVersion = "2.6.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -46,9 +47,14 @@ dependencies {
     runtimeOnly("com.mysql:mysql-connector-j")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
+    // JWT
     implementation("io.jsonwebtoken:jjwt-api:${jwtVersion}")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:${jwtVersion}")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:${jwtVersion}")
+
+    // Swagger-UI
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${swaggerUiVersion}")
+
 }
 
 kotlin {
