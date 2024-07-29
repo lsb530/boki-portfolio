@@ -8,6 +8,9 @@ plugins {
     kotlin("plugin.jpa") version "1.9.24"
     kotlin("jvm") version "1.9.24"
     kotlin("plugin.spring") version "1.9.24"
+    id("io.qameta.allure") version "2.11.2"
+    id("io.qameta.allure-report") version "2.11.2"
+    jacoco
 }
 
 group = "boki"
@@ -29,8 +32,15 @@ allOpen {
     annotation("jakarta.persistence.Embeddable")
 }
 
+jacoco {
+    toolVersion = "0.8.12"
+}
+
 val jwtVersion = "0.12.6"
 val swaggerUiVersion = "2.6.0"
+val koTestVersion = "5.9.0"
+val koTestAllureExtensionVersion = "1.4.0"
+val mockkVersion = "1.13.12"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -57,6 +67,19 @@ dependencies {
 
     // Prometheus
     runtimeOnly("io.micrometer:micrometer-registry-prometheus")
+
+    // Ko-test
+    testImplementation("io.kotest:kotest-runner-junit5:$koTestVersion")
+    testImplementation("io.kotest:kotest-extensions-htmlreporter:$koTestVersion")
+
+    // allure
+    implementation("io.kotest.extensions:kotest-extensions-allure:$koTestAllureExtensionVersion")
+
+    // mockk
+    testImplementation("io.mockk:mockk:${mockkVersion}")
+
+    // AOP
+    implementation("org.springframework.boot:spring-boot-starter-aop")
 }
 
 kotlin {
@@ -67,6 +90,19 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport, tasks.allureReport)
+}
+
+tasks.allureReport {
+    dependsOn(tasks.test)
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test)
+    reports {
+        xml.required.set(false)
+        html.required.set(true)
+    }
 }
 
 tasks.getByName<BootJar>("bootJar") {
