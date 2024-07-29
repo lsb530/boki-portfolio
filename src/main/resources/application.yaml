@@ -8,4 +8,4 @@ spring:
     name: boki-portfolio
   profiles:
     active: dev
-    include: datasource, jpa, logging
+    include: datasource, jpa, logging, swagger
