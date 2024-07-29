@@ -55,6 +55,8 @@ dependencies {
     // Swagger-UI
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:${swaggerUiVersion}")
 
+    // Prometheus
+    runtimeOnly("io.micrometer:micrometer-registry-prometheus")
 }
 
 kotlin {
