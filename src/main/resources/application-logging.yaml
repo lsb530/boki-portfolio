@@ -14,9 +14,9 @@ spring:
 
 logging:
   level:
-    root: debug
+    root: info
     org:
-      springframework: debug
+      springframework: info
       springframework.web: debug
       hibernate:
         SQL: debug
