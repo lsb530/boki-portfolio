@@ -90,11 +90,15 @@ kotlin {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    systemProperty("kotest.framework.classpath.scanning.autoscan.disable", "true")
     finalizedBy(tasks.jacocoTestReport, tasks.allureReport)
 }
 
 tasks.allureReport {
     dependsOn(tasks.test)
+    doFirst {
+        delete(layout.buildDirectory.dir("reports/allure-report/allureReport"))
+    }
 }
 
 tasks.jacocoTestReport {
