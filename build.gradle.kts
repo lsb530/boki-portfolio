@@ -41,6 +41,7 @@ val swaggerUiVersion = "2.6.0"
 val koTestVersion = "5.9.0"
 val koTestAllureExtensionVersion = "1.4.0"
 val mockkVersion = "1.13.12"
+val springMockkVersion = "4.0.2"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -77,6 +78,7 @@ dependencies {
 
     // mockk
     testImplementation("io.mockk:mockk:${mockkVersion}")
+    testImplementation("com.ninja-squad:springmockk:${springMockkVersion}")
 
     // AOP
     implementation("org.springframework.boot:spring-boot-starter-aop")
