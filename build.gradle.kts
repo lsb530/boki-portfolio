@@ -1,4 +1,6 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
+import java.nio.file.Files
+import java.nio.file.Path
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -94,6 +96,15 @@ tasks.withType<Test> {
     useJUnitPlatform()
     systemProperty("kotest.framework.classpath.scanning.autoscan.disable", "true")
     finalizedBy(tasks.jacocoTestReport, tasks.allureReport)
+    doLast {
+        val rootDir = project.rootDir.toPath()
+        Files.newDirectoryStream(rootDir, "ajcore.*.txt").use { directoryStream ->
+            directoryStream.forEach { path: Path? ->
+                path?.let { Files.delete(it) }
+                println("Deleted file: $path")
+            }
+        }
+    }
 }
 
 tasks.allureReport {
@@ -112,6 +123,7 @@ tasks.jacocoTestReport {
 }
 
 tasks.getByName<BootJar>("bootJar") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     val dateFormat = SimpleDateFormat("yyMMdd_HHmm")
     archiveFileName.set("${project.name}-${dateFormat.format(Date())}_${project.version}.jar")
     enabled = true
