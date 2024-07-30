@@ -5,7 +5,7 @@ import boki.bokiportfolio.dto.UserRegisterRequest
 import boki.bokiportfolio.dto.UserResponse
 import boki.bokiportfolio.entity.User
 import boki.bokiportfolio.exception.CustomException
-import boki.bokiportfolio.repository.UserCrudRepository
+import boki.bokiportfolio.repository.UserRepository
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.assertions.throwables.shouldThrow
@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 
 class AuthServiceTest : BehaviorSpec({
     val passwordEncoder = mockk<PasswordEncoder>()
-    val userRepository = mockk<UserCrudRepository>()
+    val userRepository = mockk<UserRepository>()
     val authService = AuthService(passwordEncoder, userRepository)
 
     afterTest {

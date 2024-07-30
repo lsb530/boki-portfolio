@@ -1,7 +1,7 @@
 package boki.bokiportfolio.helper
 
 import boki.bokiportfolio.entity.User
-import boki.bokiportfolio.repository.UserCrudRepository
+import boki.bokiportfolio.repository.UserRepository
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.ApplicationContext
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 @Component
 class DataInitializer(
     private val passwordEncoder: PasswordEncoder,
-    private val userRepository: UserCrudRepository,
+    private val userRepository: UserRepository,
     private val applicationContext: ApplicationContext,
 ) : ApplicationRunner {
 

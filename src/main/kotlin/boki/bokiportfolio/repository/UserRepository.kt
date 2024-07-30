@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserCrudRepository: CrudRepository<User, Long> {
+interface UserRepository: CrudRepository<User, Long> {
     fun existsUserByEmail(email: String): Boolean
     fun existsUserByUserId(userId: String): Boolean
     fun existsUserByPhoneNumber(phoneNumber: String): Boolean

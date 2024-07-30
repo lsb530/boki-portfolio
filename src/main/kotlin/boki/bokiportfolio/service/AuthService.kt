@@ -4,7 +4,7 @@ import boki.bokiportfolio.common.ErrorCode
 import boki.bokiportfolio.dto.UserRegisterRequest
 import boki.bokiportfolio.dto.UserResponse
 import boki.bokiportfolio.exception.CustomException
-import boki.bokiportfolio.repository.UserCrudRepository
+import boki.bokiportfolio.repository.UserRepository
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class AuthService(
     private val passwordEncoder: PasswordEncoder,
-    private val userRepository: UserCrudRepository,
+    private val userRepository: UserRepository,
 ) {
     @Transactional
     fun signup(userRegisterRequest: UserRegisterRequest): UserResponse {
