@@ -1,5 +1,6 @@
 package boki.bokiportfolio.exception
 
+import com.fasterxml.jackson.databind.JsonMappingException
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -70,9 +71,13 @@ class GlobalExceptionHandler {
     fun handleHttpMessageNotReadableException(
         ex: HttpMessageNotReadableException, request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
-        var customMsg = "Message Not Readable"
-        ex.message?.let {
-            customMsg = it.substring(it.indexOf("problem")).replace("problem: ", "")
+        val rootCause = ex.mostSpecificCause
+        val customMsg = if (rootCause is JsonMappingException) {
+            val path = rootCause.path.joinToString(separator = ".") { it.fieldName }
+            "Missing required field: $path"
+        }
+        else {
+            "Message Not Readable: ${rootCause.message}"
         }
         return createErrorResponse(
             type = "Invalid_Request",
