@@ -24,6 +24,7 @@ class SecurityConfig {
 //        "/management/**",
         "/login",
         "/api/login",
+        "/api/auth/**", // for test until login
     )
 
     @Bean

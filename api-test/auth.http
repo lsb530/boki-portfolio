@@ -1,0 +1,21 @@
+@protocol = http
+@myhost = localhost:8080
+@target = {{protocol}}://{{myhost}}
+@auth_endpoint = {{protocol}}://{{myhost}}/api/auth
+
+// @no-log
+
+// @no-cookie-jar
+
+### 회원가입
+# with validation
+POST {{auth_endpoint}}/signup
+Content-Type: application/json
+
+{
+    "email": "test1@test.com",
+    "phoneNumber": "010-1234-5678",
+    "userId":  "Tester1",
+    "name": "이승복",
+    "password":  "Password12345!@"
+}
