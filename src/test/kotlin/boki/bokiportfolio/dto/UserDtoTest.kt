@@ -96,10 +96,22 @@ class UserDtoTest : FunSpec(
                         ex.message shouldBe "잘못된 아이디 형식입니다"
                     }
                 }
+
+                test("❌- `admin` 문자열이 들어간 아이디 형식으로 회원가입 요청을 하면 예외가 발생한다") {
+                    val inValidUserIdArray = listOf(
+                        "admin",
+                        "admin1234",
+                    )
+                    inValidUserIdArray.forAll {
+                        val ex = shouldThrow<IllegalArgumentException> {
+                            userRegisterFixture.copy(userId = it)
+                        }
+                        ex.message shouldBe "잘못된 아이디 형식입니다"
+                    }
+                }
+
                 test("✅- 올바른 아이디 형식으로 회원가입 요청을 할 수 있다") {
                     val validUserIdArray = listOf(
-                        "admin",
-                        "Admin",
                         "tester",
                         "TesTer",
                         "user123",

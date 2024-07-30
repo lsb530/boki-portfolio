@@ -35,6 +35,8 @@ data class UserRegisterRequest(
     }
 
     private fun isValidUserId(userId: String): Boolean {
+        if (userId.contains("admin"))
+            return false
         val userIdRegex = "^(?=.*[a-zA-Z])[a-zA-Z0-9]+$"
         return Pattern.compile(userIdRegex).matcher(userId).matches()
     }
