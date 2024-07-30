@@ -16,9 +16,13 @@ class BokiPortfolioApplication {
     @Value("\${spring.profiles.active}")
     private val activeProfile: String? = null
 
+    @Value("\${boki.token.secret}")
+    private val secret: String? = null
+
     @Bean
     fun printActiveProfile() = CommandLineRunner {
         log.info("Active Profile: $activeProfile")
+        log.info("jwt secret: $secret")
     }
 
 }
