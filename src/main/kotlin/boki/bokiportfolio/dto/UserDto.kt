@@ -1,14 +1,25 @@
 package boki.bokiportfolio.dto
 
 import boki.bokiportfolio.entity.User
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.security.crypto.password.PasswordEncoder
 import java.util.regex.Pattern
 
+@Schema(name = "회원 가입 요청", description = "회원 가입 요청 정보")
 data class UserRegisterRequest(
+    @field:Schema(description = "이메일", example = "test1@test.com", required = true)
     val email: String,
+
+    @field:Schema(description = "핸드폰 번호", example = "010-1234-5678", required = true)
     val phoneNumber: String,
+
+    @field:Schema(description = "아이디(대/소문자 영어, 숫자)", example = "tester", required = true)
     val userId: String,
+
+    @field:Schema(description = "이름(한글)", example = "홍길동", required = true)
     val name: String,
+
+    @field:Schema(description = "비밀번호(대문자/소문자/숫자/특수문자[2개] 포함 7글자 이상)", example = "Password2024!@", required = true)
     val password: String,
 ) {
     init {
@@ -52,11 +63,21 @@ data class UserRegisterRequest(
     }
 }
 
+@Schema(name = "유저 정보 응답", description = "유저 관련 응답 정보")
 data class UserResponse(
+    @field:Schema(description = "DB id")
     val id: Long,
+
+    @field:Schema(description = "아이디")
     val userId: String,
+
+    @field:Schema(description = "이메일")
     val email: String,
+
+    @field:Schema(description = "핸드폰 번호")
     val phoneNumber: String,
+
+    @field:Schema(description = "이름")
     val name: String,
 ) {
     companion object {

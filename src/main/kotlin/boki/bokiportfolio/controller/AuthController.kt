@@ -1,5 +1,6 @@
 package boki.bokiportfolio.controller
 
+import boki.bokiportfolio.controller.doc.AuthApiSpec
 import boki.bokiportfolio.dto.UserRegisterRequest
 import boki.bokiportfolio.dto.UserResponse
 import boki.bokiportfolio.service.AuthService
@@ -14,9 +15,10 @@ import java.net.URI
 @RestController
 class AuthController(
     private val authService: AuthService,
-) {
+): AuthApiSpec {
+
     @PostMapping("/signup")
-    fun signup(@RequestBody userRegisterRequest: UserRegisterRequest): ResponseEntity<UserResponse> {
+    override fun signup(@RequestBody userRegisterRequest: UserRegisterRequest): ResponseEntity<UserResponse> {
         val newUserResponse = authService.signup(userRegisterRequest)
         val location = URI.create("/api/users/${newUserResponse.id}")
         return ResponseEntity.created(location).body(newUserResponse)
