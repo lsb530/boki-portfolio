@@ -1,0 +1,31 @@
+@protocol = http
+@myhost = localhost:8080
+@target = {{protocol}}://{{myhost}}
+@auth_endpoint = {{protocol}}://{{myhost}}/api/auth
+@article_endpoint = {{protocol}}://{{myhost}}/api/articles
+
+### 로그인(일반사용자)
+< {%
+    client.global.clearAll()
+%}
+POST {{auth_endpoint}}/login
+Content-Type: application/json
+
+{
+    "userId": "test",
+    "password": "test"
+}
+
+> {%
+    client.global.set("access_token", response.body.accessToken.value)
+%}
+
+### 게시글 등록
+POST {{article_endpoint}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "title": "ㅎㅇ",
+    "content": "안녕하세요"
+}
