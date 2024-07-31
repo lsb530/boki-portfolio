@@ -56,9 +56,9 @@
 
 ## 게시글 삭제
 
-* [ ]  Soft Delete 적용 deletedAt 사용하여 삭제처리
-* [ ]  Hard Delete 적용
-* [ ]  테스트 코드 작성 및 통과
+* [x]  Soft Delete 적용 deletedAt 사용하여 삭제처리
+* [x]  Hard Delete 적용
+* [x]  테스트 코드 작성 및 통과
 
 ## 📌 추가 기능구현
 
