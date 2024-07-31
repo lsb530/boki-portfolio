@@ -176,3 +176,7 @@ JWT를 이용한 사용자 인증
 ### 디자인 시스템(UI)
 
 * [ ] 직접만들기(scss) or UI 프레임워크<라이브러리> 적용(Material UI or PrimeReact) + TailwindCSS
+
+### 모니터링 시스템
+
+* [ ] UI/UX 모니터링 시스템 구축 - Sentry/Datadog/Rollbar
