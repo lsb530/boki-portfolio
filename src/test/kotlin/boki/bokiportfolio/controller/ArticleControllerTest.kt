@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 
 class ArticleControllerTest : ControllerTestSupport() {
 
-    @DisplayName("게시글을 등록한다")
+    @DisplayName("✅- 게시글을 등록한다")
     @WithMockUser
     @Test
     @Throws(Exception::class)
@@ -56,7 +56,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.editExpiryDate").exists())
     }
 
-    @DisplayName("관리자가 아닌 다른 사람이 올린 게시글을 수정할 수 없다")
+    @DisplayName("❌- 관리자가 아닌 다른 사람이 올린 게시글을 수정 할 수 없다")
     @WithMockUser(username = "3", roles = ["USER"])
     @Test
     @Throws(Exception::class)
@@ -91,7 +91,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.status().isForbidden)
     }
 
-    @DisplayName("본인이 올린 게시글을 수정한다")
+    @DisplayName("✅- 본인이 올린 게시글을 수정한다")
     @WithMockUser(username = "1", roles = ["USER"])
     @Test
     @Throws(Exception::class)
@@ -132,7 +132,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.editExpiryDate").exists())
     }
 
-    @DisplayName("관리자가 직접 게시글을 수정한다")
+    @DisplayName("✅- 관리자가 직접 게시글을 수정한다")
     @WithMockUser(username = "admin", roles = ["ADMIN"])
     @Test
     @Throws(Exception::class)
@@ -171,5 +171,68 @@ class ArticleControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.updatedAt").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.editExpiryDate").exists())
+    }
+
+    @DisplayName("❌- 관리자가 아닌 다른 사람이 올린 게시글을 삭제 할 수 없다")
+    @WithMockUser(username = "3", roles = ["USER"])
+    @Test
+    @Throws(Exception::class)
+    fun deleteArticleBySomeoneElseNoAdmin() {
+        // given
+        val articleId = 1L
+
+        Mockito.doNothing().`when`(articleService).deleteArticle(articleId)
+
+        // then // then
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/articles/{articleId}", articleId)
+                .queryParam("authorId", "1")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON),
+        )
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isForbidden)
+    }
+
+    @DisplayName("✅- 본인이 올린 게시글을 수정한다")
+    @WithMockUser(username = "1", roles = ["USER"])
+    @Test
+    @Throws(Exception::class)
+    fun deleteArticleByMe() {
+        // given
+        val articleId = 1L
+
+        Mockito.doNothing().`when`(articleService).deleteArticle(articleId)
+
+        // when // then
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/articles/{articleId}", articleId)
+                .queryParam("authorId", "1")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON),
+        )
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isNoContent())
+    }
+
+    @DisplayName("✅- 관리자가 직접 게시글을 수정한다")
+    @WithMockUser(username = "admin", roles = ["ADMIN"])
+    @Test
+    @Throws(Exception::class)
+    fun deleteArticleByAdmin() {
+        // given
+        val articleId = 1L
+
+        Mockito.doNothing().`when`(articleService).deleteArticle(articleId)
+
+        // when // then
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete("/api/articles/{articleId}", articleId)
+                .queryParam("authorId", "1")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON),
+        )
+            .andDo(MockMvcResultHandlers.print())
+            .andExpect(MockMvcResultMatchers.status().isNoContent())
     }
 }
