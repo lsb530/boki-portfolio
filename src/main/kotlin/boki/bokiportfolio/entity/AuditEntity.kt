@@ -2,7 +2,6 @@ package boki.bokiportfolio.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.MappedSuperclass
-import jakarta.persistence.PrePersist
 import jakarta.persistence.PreUpdate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
@@ -11,7 +10,7 @@ import java.time.temporal.ChronoUnit
 abstract class AuditEntity {
 
     @Column(name = "created_at", nullable = false, updatable = false)
-    var createdAt: LocalDateTime? = null
+    var createdAt: LocalDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
         protected set
 
     @Column(name = "updated_at", nullable = true)
@@ -21,11 +20,6 @@ abstract class AuditEntity {
     @Column(name = "deleted_at", nullable = true)
     var deletedAt: LocalDateTime? = null
         protected set
-
-    @PrePersist
-    protected fun onCreate() {
-        createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS)
-    }
 
     @PreUpdate
     protected fun onUpdate() {
