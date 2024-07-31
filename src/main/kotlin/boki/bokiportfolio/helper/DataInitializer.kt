@@ -24,13 +24,14 @@ class DataInitializer(
     // AOP 프록시 기반의 트랜잭션 분리(self-invocation)
     override fun run(args: ApplicationArguments?) {
         val self = applicationContext.getBean(DataInitializer::class.java)
-        self.initUser()
-        Thread.sleep(5000L)
-        self.updateUser()
-        Thread.sleep(5000L)
-        self.softDeleteUser()
-        Thread.sleep(5000L)
-        self.deleteUser()
+        self.initUsers()
+        /*        self.initUser()
+                Thread.sleep(5000L)
+                self.updateUser()
+                Thread.sleep(5000L)
+                self.softDeleteUser()
+                Thread.sleep(5000L)
+                self.deleteUser()*/
     }
 
     @Transactional(readOnly = true)
@@ -42,6 +43,27 @@ class DataInitializer(
         }
     }
 
+    @Transactional
+    fun initUsers() {
+        if (isInitialState(userRepository)) {
+            val normalUser = User.createUser(
+                "test@test.com",
+                "test",
+                "010-1234-5678",
+                "테스터",
+                passwordEncoder.encode("test"),
+            )
+            val adminUser = User.createAdminUser(
+                "admin@admin.com",
+                "admin",
+                "010-1234-7777",
+                "관리자",
+                passwordEncoder.encode("admin"),
+            )
+            userRepository.saveAll(listOf(normalUser, adminUser))
+        }
+    }
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     fun initUser() {
         if (isInitialState(userRepository)) {
@@ -50,7 +72,8 @@ class DataInitializer(
                 "Tester1",
                 "010-1234-5678",
                 "테스터1",
-                passwordEncoder.encode("Test11111!@"))
+                passwordEncoder.encode("Test11111!@"),
+            )
             userRepository.saveAll(listOf(user1))
         }
     }
