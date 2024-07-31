@@ -25,12 +25,13 @@ class SecurityConfig(
 ) {
 
     private val allowedUrls = arrayOf(
-        "/", "/api", "/api/swagger-ui/**",
+        "/",
+        "/api/swagger-ui/**",
         "/api/docs:**/**",
-//        "/management/**",
-        "/login",
-        "/api/login",
-        "/api/auth/**", // for test until login
+//        "/management/**", // actuator endpoint
+        "/login", // spring security default form login endpoint
+        "/api/auth/login",
+        "/api/auth/signup",
     )
 
     @Bean
