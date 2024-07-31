@@ -74,10 +74,10 @@ class GlobalExceptionHandler {
         val rootCause = ex.mostSpecificCause
         val customMsg = if (rootCause is JsonMappingException) {
             val path = rootCause.path.joinToString(separator = ".") { it.fieldName }
-            "Missing required field: $path"
+            "$path 필드가 비어있습니다"
         }
         else {
-            "Message Not Readable: ${rootCause.message}"
+            "${rootCause.message}"
         }
         return createErrorResponse(
             type = "Invalid_Request",
