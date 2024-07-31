@@ -71,7 +71,9 @@ class ArticleService(
     }
 
     @Transactional
-    fun deleteArticle(articleId: Long, hasToSoftDel: Boolean) {
+    fun deleteArticle(articleId: Long, hasToSoftDel: Boolean = true) {
+        verifyAuthentication()
+
         val article = articleRepository.findByIdOrNull(articleId)
             ?: throw CustomException(ErrorCode.NOT_FOUND_ARTICLE)
         if (hasToSoftDel) {

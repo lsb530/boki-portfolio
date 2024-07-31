@@ -14,9 +14,12 @@ import boki.bokiportfolio.util.SecurityHelper
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.nulls.shouldBeNull
+import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
+import io.mockk.Runs
 import io.mockk.clearAllMocks
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
@@ -29,8 +32,9 @@ class ArticleServiceTest : BehaviorSpec(
 
 //        val articleService = ArticleService(userRepository, articleRepository)
         // 내부 함수를 호출하기 위해서 spy로 선언해 줄 필요가 있었음..
-        val articleService = spyk(ArticleService(userRepository, articleRepository),
-            recordPrivateCalls = true
+        val articleService = spyk(
+            ArticleService(userRepository, articleRepository),
+            recordPrivateCalls = true,
         )
 
         afterTest {
@@ -139,7 +143,7 @@ class ArticleServiceTest : BehaviorSpec(
                         role = Role.USER,
                     )
 
-                    val findArticle = Article (
+                    val findArticle = Article(
                         id = 1L,
                         title = "제목",
                         content = "내용",
@@ -176,7 +180,7 @@ class ArticleServiceTest : BehaviorSpec(
                         role = Role.USER,
                     )
 
-                    val findArticle = Article (
+                    val findArticle = Article(
                         id = 1L,
                         title = "제목",
                         content = "내용",
@@ -220,7 +224,7 @@ class ArticleServiceTest : BehaviorSpec(
                         role = Role.USER,
                     )
 
-                    val findArticle = Article (
+                    val findArticle = Article(
                         id = 1L,
                         title = "제목",
                         content = "내용",
@@ -248,6 +252,104 @@ class ArticleServiceTest : BehaviorSpec(
                         verify { articleService.verifyEditableArticle(any(), any()) }
                         verify { articleService.hasToWarnEditAlarm(any(), any()) }
                         verify { articleRepository.saveAndFlush(any()) }
+                    }
+                }
+            }
+        }
+
+        context("게시글 삭제 요청") {
+
+            Given("게시글을 삭제하려는 상황에서") {
+
+                val articleId = 1L
+
+                When("❌- 로그인을 하지 않은 유저가 글을 수정하려 할 때") {
+                    Then("UNAUTHORIZED_ACCESS(인증 필요) 예외가 발생한다") {
+                        val ex = shouldThrow<CustomException> {
+                            articleService.deleteArticle(articleId)
+                        }
+                        ex.message shouldBe "인증이 필요한 요청입니다"
+
+                        verify(exactly = 0) { userRepository.findByIdOrNull(any()) }
+                    }
+                }
+
+                When("❌- 존재하지 않는 게시글을 삭제하려 할 때") {
+                    SecurityHelper.injectSecurityContext(1L, Role.USER)
+                    every { articleRepository.findByIdOrNull(articleId) } throws CustomException(ErrorCode.NOT_FOUND_ARTICLE)
+
+                    Then("NOT_FOUND_ARTICLE(게시글 없음) 예외가 발생한다") {
+                        val ex = shouldThrow<CustomException> {
+                            articleService.deleteArticle(articleId)
+                        }
+                        ex.errorCode shouldBe ErrorCode.NOT_FOUND_ARTICLE
+                        ex.message shouldBe "해당 게시글은 존재하지 않습니다"
+
+                        verify { articleRepository.findByIdOrNull(articleId) }
+                    }
+                }
+
+                When("✅- soft delete 를 하려고 할 때") {
+                    SecurityHelper.injectSecurityContext(1L, Role.USER)
+
+                    val user = User(
+                        id = 1L,
+                        email = "test@example.com",
+                        phoneNumber = "010-1234-5678",
+                        userId = "testUser",
+                        name = "홍길동",
+                        password = "Password1234!@",
+                        role = Role.USER,
+                    )
+
+                    val findArticle = spyk(
+                        Article(
+                            id = 1L,
+                            title = "제목",
+                            content = "내용",
+                            user = user,
+                        ),
+                    )
+
+                    every { articleRepository.findByIdOrNull(articleId) } returns findArticle
+
+                    Then("게시글의 deletedAt에 시간이 기록되며, 204(성공) 상태값만 반환한다") {
+                        articleService.deleteArticle(articleId, true)
+
+                        verify { articleRepository.findByIdOrNull(articleId) }
+                        verify { findArticle.softDelete() }
+                        findArticle.deletedAt.shouldNotBeNull()
+                    }
+                }
+
+                When("✅- hard delete 를 하려고 할 때") {
+                    SecurityHelper.injectSecurityContext(1L, Role.USER)
+
+                    val user = User(
+                        id = 1L,
+                        email = "test@example.com",
+                        phoneNumber = "010-1234-5678",
+                        userId = "testUser",
+                        name = "홍길동",
+                        password = "Password1234!@",
+                        role = Role.USER,
+                    )
+
+                    val findArticle = Article(
+                        id = 1L,
+                        title = "제목",
+                        content = "내용",
+                        user = user,
+                    )
+
+                    every { articleRepository.findByIdOrNull(articleId) } returns findArticle
+                    every { articleRepository.delete(findArticle) } just Runs
+
+                    Then("게시글의 데이터베이스에서 삭제되며, 204(성공) 상태값만 반환한다") {
+                        articleService.deleteArticle(articleId, false)
+
+                        verify { articleRepository.findByIdOrNull(articleId) }
+                        verify { articleRepository.delete(findArticle) }
                     }
                 }
             }
