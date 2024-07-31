@@ -2,6 +2,10 @@ package boki.bokiportfolio.dto
 
 import boki.bokiportfolio.entity.Article
 import boki.bokiportfolio.entity.User
+import boki.bokiportfolio.validator.ArticleValidator.INVALID_ARTICLE_CONTENT_MSG
+import boki.bokiportfolio.validator.ArticleValidator.INVALID_ARTICLE_TITLE_MSG
+import boki.bokiportfolio.validator.ArticleValidator.isValidContent
+import boki.bokiportfolio.validator.ArticleValidator.isValidTitle
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
@@ -13,8 +17,8 @@ data class ArticleCreateRequest(
     val content: String,
 ) {
     init {
-        require(isValidTitle(title)) { "제목은 200글자를 넘을 수 없습니다" }
-        require(isValidContent(content)) { "내용은 1000글자를 넘을 수 없습니다" }
+        require(isValidTitle(title)) { INVALID_ARTICLE_TITLE_MSG }
+        require(isValidContent(content)) { INVALID_ARTICLE_CONTENT_MSG }
     }
 
     fun toEntity(user: User): Article {
