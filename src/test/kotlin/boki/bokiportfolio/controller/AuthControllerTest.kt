@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 class AuthControllerTest : ControllerTestSupport() {
 
-    @DisplayName("회원 가입을 성공한다.")
+    @DisplayName("회원 가입을 성공한다")
     @WithAnonymousUser
     @Test
     @Throws(Exception::class)
@@ -57,7 +57,7 @@ class AuthControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("홍길동"))
     }
 
-    @DisplayName("로그인을 실패한다.")
+    @DisplayName("로그인을 실패한다")
     @WithAnonymousUser
     @Test
     @Throws(Exception::class)
@@ -81,7 +81,7 @@ class AuthControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
-    @DisplayName("로그인을 성공한다.")
+    @DisplayName("로그인을 성공한다")
     @WithAnonymousUser
     @Test
     @Throws(Exception::class)

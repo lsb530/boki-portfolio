@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.test.web.servlet.MockMvc
+import org.springframework.web.context.WebApplicationContext
 
 @WebMvcTest(
     controllers = [
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc
     ],
 )
 @Import(SecurityConfig::class)
+@EnableMethodSecurity(proxyTargetClass = true, prePostEnabled = true)
 abstract class ControllerTestSupport {
 
     @Autowired
@@ -33,6 +36,9 @@ abstract class ControllerTestSupport {
 
     @Autowired
     protected lateinit var jwtAuthFilter: JwtAuthFilter
+
+    @Autowired
+    protected lateinit var context: WebApplicationContext
 
     @MockBean
     protected lateinit var customUserDetailsService: CustomUserDetailsService
