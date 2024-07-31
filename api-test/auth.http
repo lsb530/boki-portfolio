@@ -15,9 +15,9 @@ Content-Type: application/json
 {
     "email": "hello@test.com",
     "phoneNumber": "010-7777-5678",
-    "userId":  "Tester1",
+    "userId": "Tester1",
     "name": "이승복",
-    "password":  "Password12345!@"
+    "password": "Password12345!@"
 }
 
 ### 로그인
@@ -25,6 +25,43 @@ POST {{auth_endpoint}}/login
 Content-Type: application/json
 
 {
-    "userId":  "Tester1",
-    "password":  "Password12345!@"
+    "userId": "Tester1",
+    "password": "Password12345!@"
 }
+
+### 로그인(일반사용자)
+< {%
+    client.global.clearAll()
+%}
+POST {{auth_endpoint}}/login
+Content-Type: application/json
+
+{
+    "userId": "test",
+    "password": "test"
+}
+
+> {%
+    client.global.set("access_token", response.body.accessToken.value)
+%}
+
+### 로그인(관리자)
+< {%
+    client.global.clearAll()
+%}
+POST {{auth_endpoint}}/login
+Content-Type: application/json
+
+{
+    "userId": "admin",
+    "password": "admin"
+}
+
+> {%
+    client.global.set("access_token", response.body.accessToken.value)
+%}
+
+### test
+GET http://localhost:8080/test
+Authorization: Bearer {{access_token}}
+
