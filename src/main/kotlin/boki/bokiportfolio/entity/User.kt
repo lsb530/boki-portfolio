@@ -1,10 +1,15 @@
 package boki.bokiportfolio.entity
 
 import boki.bokiportfolio.common.Role
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
-import jakarta.persistence.*
+import jakarta.persistence.Id
+import jakarta.persistence.OneToMany
 
 @Entity
 class User(
@@ -29,7 +34,10 @@ class User(
 
     @Column(nullable = false, unique = false)
     @Enumerated(EnumType.STRING)
-    val role: Role
+    val role: Role,
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.REMOVE], orphanRemoval = true)
+    val articles: MutableList<Article> = mutableListOf(),
 ) : AuditEntity() {
 
     companion object {
