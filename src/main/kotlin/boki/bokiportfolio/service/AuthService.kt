@@ -1,10 +1,13 @@
 package boki.bokiportfolio.service
 
 import boki.bokiportfolio.common.ErrorCode
-import boki.bokiportfolio.dto.UserRegisterRequest
 import boki.bokiportfolio.dto.UserResponse
+import boki.bokiportfolio.dto.LoginRequest
+import boki.bokiportfolio.dto.UserRegisterRequest
 import boki.bokiportfolio.exception.CustomException
 import boki.bokiportfolio.repository.UserRepository
+import boki.bokiportfolio.security.JwtProvider
+import boki.bokiportfolio.security.TokenPair
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 class AuthService(
     private val passwordEncoder: PasswordEncoder,
     private val userRepository: UserRepository,
+    private val jwtProvider: JwtProvider,
 ) {
     @Transactional
     fun signup(userRegisterRequest: UserRegisterRequest): UserResponse {
@@ -33,4 +37,12 @@ class AuthService(
         }
     }
 
+    fun login(loginRequest: LoginRequest): TokenPair {
+        val findUser = userRepository.findUserByUserId(loginRequest.userId)
+            ?: throw CustomException(ErrorCode.NOT_FOUND_USER)
+        if (!passwordEncoder.matches(loginRequest.password, findUser.password)) {
+            throw CustomException(ErrorCode.FAILED_LOGIN)
+        }
+        return jwtProvider.generatePairToken(findUser.id!!)
+    }
 }
