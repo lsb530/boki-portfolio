@@ -9,6 +9,8 @@ enum class ErrorCode(val status: HttpStatus, var message: String) {
 
     // Auth
     FAILED_LOGIN(HttpStatus.BAD_REQUEST, "로그인에 실패하였습니다"),
+    UNAUTHORIZED_ACCESS(HttpStatus.UNAUTHORIZED, "인증이 필요한 요청입니다"),
+    FORBIDDEN_ACCESS(HttpStatus.FORBIDDEN, "권한이 필요한 요청입니다"),
     INVALID_JWT_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 JWT 토큰입니다"),
 
     // Role
@@ -17,4 +19,8 @@ enum class ErrorCode(val status: HttpStatus, var message: String) {
     // User
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "등록된 회원 정보가 없습니다"),
     DUPLICATE_USER(HttpStatus.BAD_REQUEST, "중복된 이메일입니다"),
+
+    // Article
+    NOT_FOUND_ARTICLE(HttpStatus.NOT_FOUND, "해당 게시글은 존재하지 않습니다"),
+    INVALID_EDIT_ARTICLE(HttpStatus.BAD_REQUEST, "해당 게시글은 수정 가능한 날짜가 지났습니다")
 }
