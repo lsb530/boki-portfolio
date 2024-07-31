@@ -92,3 +92,81 @@ JWT를 이용한 사용자 인증
 
 * [ ]  댓글 및 좋아요 시 알림 기능
 * [ ]  수정 제한 경고 알림
+
+# 🌟 더욱 더 추가하기
+
+## Backend
+### 코드 품질 향상
+
+* [ ] SonarQube 적용 - 정적 코드 분석
+* [ ] Design Patten, Architecture Patten 적용하기
+* [ ] Multi Module 적용
+
+### 테스트 - 부하/성능/스트레스 테스트
+
+* [ ] Artillery/nGrinder/jMeter 중 택 1 적용 for TPS(Transaction Per Second) (Throughput 증가/Response Time 감소)
+
+### Dev+Human 운영
+
+* [ ] 슬랙 알림 적용(로그인 시, 에러 발생 시)
+
+### 로깅
+
+* [ ] 일반 로깅(println, 로그 < Warn)과 유의 로깅(로그 >= WARN) 2개 파일로 구분 관리
+
+### 악의 이용 방지
+
+* [ ] 어뷰징 방지 - 짧은 시간 내 같은 IP/API 요청이 있을 경우 해당 IP 블록
+* [ ] 욕설이 포함된 글 제목/내용/댓글은 다른 텍스트로 대체되거나 해당 유저의 이용 차단 기능
+
+### Caching Layer
+
+* [ ] Internal/External Cache 적용 - Refresh Token 저장
+* [ ] Refresh Token 재발급 api 추가
+
+### APM - Application Performance Monitoring
+
+* [ ] 프로메테우스 - 그라파나 대시보드 적용
+* [ ] CPU, JVM, DB hikari Pool 모니터링
+* [ ] 게시글, 댓글 수 모니터링 - Gauge/Counter/Timer
+
+### Ops
+
+* [ ] 도커로 말아서 배포
+* [ ] 쿠버네티스로 말아서 배포
+* [ ] Ingress Controller 추가
+* [ ] GitOps + ArgoCD 적용
+
+### CI/CD
+
+* [ ] Github Actions/Jenkins/TeamCity 사용해서 CI/CD pipeline 구축
+
+### 쪽지 기능
+
+* [ ] 글 작성자에게 쪽지 보내는 기능 추가
+* [ ] 답장 기능 추가
+
+### 채팅 기능
+
+* [ ] 채팅방 접속
+* [ ] 채팅하기
+* [ ] 차단하기
+* [ ] 채팅방 나가기
+
+### MyPage
+
+* [ ] 내 게시글/댓글 모아보기
+
+### BackOffice
+
+* [ ] 관리자 통계 쿼리 구현
+
+## Frontend
+### 상태관리 라이브러리
+
+* [ ] Client Side State - Zustand
+* [ ] Server Side State - React-Query/Redux
+
+### 디자인 시스템(UI)
+
+* [ ] 직접만들기(scss) or UI 프레임워크<라이브러리> 적용(Material UI or PrimeReact) + TailwindCSS
