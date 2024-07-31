@@ -20,5 +20,7 @@ interface ArticleApiSpec {
     @Operation(summary = "게시글 수정", security = [SecurityRequirement(name = "accessToken")])
     fun updateArticle(@PathVariable articleId: Long, @RequestParam authorId: Long, @RequestBody articleUpdateRequest: ArticleUpdateRequest): ResponseEntity<ArticleResponse>
 
+    @Operation(summary = "게시글 삭제", security = [SecurityRequirement(name = "accessToken")])
+    fun deleteArticle(@PathVariable articleId: Long, @RequestParam authorId: Long, @RequestParam softDel: Boolean): ResponseEntity<Unit>
 }
 

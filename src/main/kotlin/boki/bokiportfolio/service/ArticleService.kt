@@ -69,4 +69,16 @@ class ArticleService(
     fun hasToWarnEditAlarm(today: LocalDate, editWarningDate: LocalDate): Boolean {
         return today.isEqual(editWarningDate)
     }
+
+    @Transactional
+    fun deleteArticle(articleId: Long, hasToSoftDel: Boolean) {
+        val article = articleRepository.findByIdOrNull(articleId)
+            ?: throw CustomException(ErrorCode.NOT_FOUND_ARTICLE)
+        if (hasToSoftDel) {
+            article.softDelete()
+        }
+        else {
+            articleRepository.delete(article)
+        }
+    }
 }

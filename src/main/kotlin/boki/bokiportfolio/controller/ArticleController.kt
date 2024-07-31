@@ -9,6 +9,7 @@ import boki.bokiportfolio.validator.SecurityManager
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -39,5 +40,16 @@ class ArticleController(
         @RequestBody articleUpdateRequest: ArticleUpdateRequest,
     ): ResponseEntity<ArticleResponse> {
         return ResponseEntity.ok(articleService.updateArticle(articleUpdateRequest.copy(id = articleId)))
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or #authorId.toString().equals(authentication.name)")
+    @DeleteMapping("/{articleId}")
+    override fun deleteArticle(
+        @PathVariable articleId: Long,
+        @RequestParam authorId: Long,
+        @RequestParam(required = false, defaultValue = "false") softDel: Boolean
+    ): ResponseEntity<Unit> {
+        articleService.deleteArticle(articleId, softDel)
+        return ResponseEntity.noContent().build()
     }
 }
