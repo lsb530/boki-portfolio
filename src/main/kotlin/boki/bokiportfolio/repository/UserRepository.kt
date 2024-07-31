@@ -9,4 +9,5 @@ interface UserRepository: CrudRepository<User, Long> {
     fun existsUserByEmail(email: String): Boolean
     fun existsUserByUserId(userId: String): Boolean
     fun existsUserByPhoneNumber(phoneNumber: String): Boolean
+    fun findUserByUserId(userId: String): User?
 }
