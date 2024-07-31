@@ -4,7 +4,6 @@ import boki.bokiportfolio.common.ErrorCode
 import boki.bokiportfolio.dto.LoginRequest
 import boki.bokiportfolio.dto.UserRegisterRequest
 import boki.bokiportfolio.dto.UserResponse
-import boki.bokiportfolio.entity.User
 import boki.bokiportfolio.exception.CustomException
 import boki.bokiportfolio.security.TokenPair
 import boki.bokiportfolio.support.ControllerTestSupport
@@ -93,7 +92,6 @@ class AuthControllerTest : ControllerTestSupport() {
             password = "Password12345!@"
         )
 
-        Mockito.`when`(userRepository.findUserByUserId("Tester1")).thenReturn(any(User::class.java))
         Mockito.`when`(authService.login(request)).thenReturn(any(TokenPair::class.java))
 
         // when // then
