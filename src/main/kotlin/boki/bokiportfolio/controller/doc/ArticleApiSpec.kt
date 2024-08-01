@@ -24,6 +24,8 @@ interface ArticleApiSpec {
     @Operation(summary = "게시글 목록 조회", security = [SecurityRequirement(name = "accessToken")])
     fun getArticles(@RequestParam title: String?, @RequestParam createdAtSortDirection: Sort.Direction): ResponseEntity<List<ArticleResponse>>
 
+    @Operation(summary = "게시글 단건 조회", security = [SecurityRequirement(name = "accessToken")])
+    fun getArticle(@PathVariable articleId: Long): ResponseEntity<ArticleResponse>
 
     @Operation(summary = "게시글 삭제", security = [SecurityRequirement(name = "accessToken")])
     fun deleteArticle(@PathVariable articleId: Long, @RequestParam authorId: Long, @RequestParam softDel: Boolean): ResponseEntity<Unit>

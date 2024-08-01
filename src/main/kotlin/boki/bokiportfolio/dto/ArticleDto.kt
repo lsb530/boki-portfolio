@@ -65,11 +65,14 @@ data class ArticleResponse(
     @field:Schema(description = "수정 가능 만료일")
     val editExpiryDate: LocalDateTime,
 
+    @field:Schema(description = "수정 가능 만료일까지 남은 날")
+    val dueDate: Int,
+
     @field:Schema(description = "수정 불가 하루 전 경고 알림")
     var warningMessage: String? = null,
 ) {
     companion object {
-        fun from(article: Article, hasToWarnEditAlarm: Boolean = false): ArticleResponse {
+        fun from(article: Article, hasToWarnEditAlarm: Boolean = false, dueDate: Int): ArticleResponse {
             val response = ArticleResponse(
                 id = article.id!!,
                 title = article.title,
@@ -78,6 +81,7 @@ data class ArticleResponse(
                 createdAt = article.createdAt,
                 updatedAt = article.updatedAt,
                 editExpiryDate = article.createdAt.plusDays(10),
+                dueDate = dueDate
             )
             if (hasToWarnEditAlarm) {
                 response.warningMessage = "게시글 수정 불가 하루 전 입니다!"

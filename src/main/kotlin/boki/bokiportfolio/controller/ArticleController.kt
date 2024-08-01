@@ -41,6 +41,11 @@ class ArticleController(
         return ResponseEntity.ok().body(articleService.getArticles(title, createdAtSortDirection))
     }
 
+    @GetMapping("/{article_id}")
+    override fun getArticle(@PathVariable(name = "article_id") articleId: Long): ResponseEntity<ArticleResponse> {
+        return ResponseEntity.ok().body(articleService.getArticle(articleId))
+    }
+
     //    @PreAuthorize("hasRole('ROLE_ADMIN') or #authorId.equals(authentication.principal.id)")
     @PreAuthorize("hasRole('ROLE_ADMIN') or #authorId.toString().equals(authentication.name)")
     @PatchMapping("/{article_id}")

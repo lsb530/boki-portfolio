@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 @Transactional(readOnly = true)
 @Service
@@ -29,13 +30,25 @@ class ArticleService(
         val userId = SecurityContextHolder.getContext().authentication.name
         val user = userRepository.findByIdOrNull(userId.toLong()) ?: throw CustomException(ErrorCode.NOT_FOUND_USER)
         val newArticle = articleRepository.save(articleCreateRequest.toEntity(user))
-        return ArticleResponse.from(newArticle)
+        val dueDate = calculateDueDate(LocalDateTime.now().toLocalDate(), newArticle.createdAt.toLocalDate().plusDays(9))
+        return ArticleResponse.from(article = newArticle, dueDate = dueDate)
     }
 
     // Criteria ✅
     fun getArticles(title: String?, createdAtSortDirection: Sort.Direction): List<ArticleResponse> {
         val findArticles = articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(title, createdAtSortDirection)
-        return findArticles.map { ArticleResponse.from(it) }
+
+        return findArticles.map {
+            val dueDate = calculateDueDate(LocalDateTime.now().toLocalDate(), it.createdAt.toLocalDate().plusDays(9))
+            return@map ArticleResponse.from(article = it, dueDate = dueDate)
+        }
+    }
+
+    fun getArticle(articleId: Long): ArticleResponse {
+        val findArticle = articleRepository.findByIdOrNull(articleId)
+            ?: throw CustomException(ErrorCode.NOT_FOUND_ARTICLE)
+        val dueDate = calculateDueDate(LocalDateTime.now().toLocalDate(), findArticle.createdAt.toLocalDate().plusDays(9))
+        return ArticleResponse.from(article = findArticle, dueDate = dueDate)
     }
 
     @Transactional
@@ -58,12 +71,15 @@ class ArticleService(
 
         val updatedArticle = articleRepository.saveAndFlush(article)
 
+        val dueDate = calculateDueDate(LocalDateTime.now().toLocalDate(), updatedArticle.createdAt.toLocalDate().plusDays(9))
+
         return ArticleResponse.from(
-            updatedArticle,
-            hasToWarnEditAlarm(
+            article = updatedArticle,
+            hasToWarnEditAlarm = hasToWarnEditAlarm(
                 today = LocalDateTime.now().toLocalDate(),
                 editWarningDate = article.createdAt.toLocalDate().plusDays(8),
             ),
+            dueDate = dueDate
         )
     }
 
@@ -75,6 +91,10 @@ class ArticleService(
 
     fun hasToWarnEditAlarm(today: LocalDate, editWarningDate: LocalDate): Boolean {
         return today.isEqual(editWarningDate)
+    }
+
+    fun calculateDueDate(today: LocalDate, editExpiryDate: LocalDate): Int {
+        return ChronoUnit.DAYS.between(today, editExpiryDate).toInt()
     }
 
     @Transactional
