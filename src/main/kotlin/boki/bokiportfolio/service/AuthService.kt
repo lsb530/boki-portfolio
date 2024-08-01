@@ -8,6 +8,7 @@ import boki.bokiportfolio.exception.CustomException
 import boki.bokiportfolio.repository.UserRepository
 import boki.bokiportfolio.security.JwtProvider
 import boki.bokiportfolio.security.TokenPair
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -44,5 +45,10 @@ class AuthService(
             throw CustomException(ErrorCode.FAILED_LOGIN)
         }
         return jwtProvider.generatePairToken(findUser.id!!)
+    }
+
+    fun me(id: Long): UserResponse {
+        val findUser = userRepository.findByIdOrNull(id) ?: throw CustomException(ErrorCode.NOT_FOUND_USER)
+        return UserResponse.from(findUser)
     }
 }
