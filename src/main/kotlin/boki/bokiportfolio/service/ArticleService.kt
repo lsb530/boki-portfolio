@@ -8,6 +8,7 @@ import boki.bokiportfolio.exception.CustomException
 import boki.bokiportfolio.repository.ArticleRepository
 import boki.bokiportfolio.repository.UserRepository
 import boki.bokiportfolio.validator.SecurityManager.verifyAuthentication
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
@@ -29,6 +30,12 @@ class ArticleService(
         val user = userRepository.findByIdOrNull(userId.toLong()) ?: throw CustomException(ErrorCode.NOT_FOUND_USER)
         val newArticle = articleRepository.save(articleCreateRequest.toEntity(user))
         return ArticleResponse.from(newArticle)
+    }
+
+    // Criteria ✅
+    fun getArticles(title: String?, createdAtSortDirection: Sort.Direction): List<ArticleResponse> {
+        val findArticles = articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(title, createdAtSortDirection)
+        return findArticles.map { ArticleResponse.from(it) }
     }
 
     @Transactional

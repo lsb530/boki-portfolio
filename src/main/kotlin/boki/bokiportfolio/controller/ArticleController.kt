@@ -5,9 +5,11 @@ import boki.bokiportfolio.dto.ArticleCreateRequest
 import boki.bokiportfolio.dto.ArticleResponse
 import boki.bokiportfolio.dto.ArticleUpdateRequest
 import boki.bokiportfolio.service.ArticleService
+import org.springframework.data.domain.Sort
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -29,7 +31,17 @@ class ArticleController(
         return ResponseEntity.created(location).body(newArticleResponse)
     }
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN') or #authorId.equals(authentication.principal.id)")
+    @GetMapping
+//    fun getArticles(@PageableDefault(page = 0, size = 10) pageable: Pageable) {
+    fun getArticles(
+        @RequestParam(name = "title", required = false) title: String?,
+        @RequestParam(name = "created_at_order_by", required = true, defaultValue = "DESC")
+        createdAtSortDirection: Sort.Direction,
+    ): ResponseEntity<Any> {
+        return ResponseEntity.ok().body(articleService.getArticles(title, createdAtSortDirection))
+    }
+
+    //    @PreAuthorize("hasRole('ROLE_ADMIN') or #authorId.equals(authentication.principal.id)")
     @PreAuthorize("hasRole('ROLE_ADMIN') or #authorId.toString().equals(authentication.name)")
     @PatchMapping("/{article_id}")
     override fun updateArticle(
@@ -45,7 +57,7 @@ class ArticleController(
     override fun deleteArticle(
         @PathVariable(name = "article_id") articleId: Long,
         @RequestParam(name = "author_id") authorId: Long,
-        @RequestParam(required = false, defaultValue = "false") softDel: Boolean
+        @RequestParam(name = "soft_del", required = false, defaultValue = "false") softDel: Boolean,
     ): ResponseEntity<Unit> {
         articleService.deleteArticle(articleId, softDel)
         return ResponseEntity.noContent().build()
