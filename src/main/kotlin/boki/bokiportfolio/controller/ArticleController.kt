@@ -33,11 +33,11 @@ class ArticleController(
 
     @GetMapping
 //    fun getArticles(@PageableDefault(page = 0, size = 10) pageable: Pageable) {
-    fun getArticles(
+    override fun getArticles(
         @RequestParam(name = "title", required = false) title: String?,
         @RequestParam(name = "created_at_order_by", required = true, defaultValue = "DESC")
         createdAtSortDirection: Sort.Direction,
-    ): ResponseEntity<Any> {
+    ): ResponseEntity<List<ArticleResponse>> {
         return ResponseEntity.ok().body(articleService.getArticles(title, createdAtSortDirection))
     }
 
