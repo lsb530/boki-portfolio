@@ -5,10 +5,8 @@ import boki.bokiportfolio.dto.ArticleCreateRequest
 import boki.bokiportfolio.dto.ArticleResponse
 import boki.bokiportfolio.dto.ArticleUpdateRequest
 import boki.bokiportfolio.service.ArticleService
-import boki.bokiportfolio.validator.SecurityManager
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -33,20 +31,20 @@ class ArticleController(
 
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or #authorId.equals(authentication.principal.id)")
     @PreAuthorize("hasRole('ROLE_ADMIN') or #authorId.toString().equals(authentication.name)")
-    @PatchMapping("/{articleId}")
+    @PatchMapping("/{article_id}")
     override fun updateArticle(
-        @PathVariable articleId: Long,
-        @RequestParam authorId: Long,
+        @PathVariable(name = "article_id") articleId: Long,
+        @RequestParam(name = "author_id") authorId: Long,
         @RequestBody articleUpdateRequest: ArticleUpdateRequest,
     ): ResponseEntity<ArticleResponse> {
         return ResponseEntity.ok(articleService.updateArticle(articleUpdateRequest.copy(id = articleId)))
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or #authorId.toString().equals(authentication.name)")
-    @DeleteMapping("/{articleId}")
+    @DeleteMapping("/{article_id}")
     override fun deleteArticle(
-        @PathVariable articleId: Long,
-        @RequestParam authorId: Long,
+        @PathVariable(name = "article_id") articleId: Long,
+        @RequestParam(name = "author_id") authorId: Long,
         @RequestParam(required = false, defaultValue = "false") softDel: Boolean
     ): ResponseEntity<Unit> {
         articleService.deleteArticle(articleId, softDel)
