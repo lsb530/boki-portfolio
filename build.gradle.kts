@@ -44,6 +44,7 @@ val koTestVersion = "5.9.0"
 val koTestAllureExtensionVersion = "1.4.0"
 val mockkVersion = "1.13.12"
 val springMockkVersion = "4.0.2"
+//val jdslVersion = "3.5.1"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -84,6 +85,11 @@ dependencies {
 
     // AOP
     implementation("org.springframework.boot:spring-boot-starter-aop")
+
+    // Kotlin JDSL from line
+//    implementation("com.linecorp.kotlin-jdsl:jpql-dsl:$jdslVersion")
+//    implementation("com.linecorp.kotlin-jdsl:jpql-render:$jdslVersion")
+//    implementation("com.linecorp.kotlin-jdsl:spring-data-jpa-support:$jdslVersion")
 }
 
 kotlin {
