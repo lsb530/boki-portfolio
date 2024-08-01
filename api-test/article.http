@@ -20,6 +20,15 @@ Content-Type: application/json
     client.global.set("access_token", response.body.accessToken.value)
 %}
 
+
+### 내 정보 조회
+GET {{auth_endpoint}}/me
+
+> {%
+    client.global.set("my_id", response.body.id)
+%}
+
+
 ### 게시글 등록
 POST {{article_endpoint}}
 Content-Type: application/json
@@ -29,3 +38,24 @@ Authorization: Bearer {{access_token}}
     "title": "ㅎㅇ",
     "content": "안녕하세요"
 }
+
+> {%
+    client.global.set("article_id", response.body.id)
+%}
+
+
+### 게시글 수정
+PATCH {{article_endpoint}}/{{article_id}}?author_id={{my_id}}
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+    "title": "수정할 제목",
+    "content": "수정할 내용"
+}
+
+
+### 게시글 삭제
+DELETE {{article_endpoint}}/{{article_id}}?author_id={{my_id}}&softDel=false
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
