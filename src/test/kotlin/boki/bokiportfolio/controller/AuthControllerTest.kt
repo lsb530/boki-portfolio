@@ -81,7 +81,8 @@ class AuthControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.status().isNotFound)
     }
 
-    @DisplayName("✅- 로그인을 성공한다")
+    @DisplayName("✅" +
+        "- 로그인을 성공한다")
     @WithAnonymousUser
     @Test
     @Throws(Exception::class)

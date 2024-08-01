@@ -35,6 +35,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             createdAt = LocalDateTime.now(),
             updatedAt = null,
             editExpiryDate = LocalDateTime.now().plusDays(10),
+            dueDate = 10
         )
 
         Mockito.`when`(articleService.createArticle(request)).thenReturn(response)
@@ -54,6 +55,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.updatedAt").doesNotExist())
             .andExpect(MockMvcResultMatchers.jsonPath("$.editExpiryDate").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.dueDate").exists())
     }
 
     @DisplayName("❌- 관리자가 아닌 다른 사람이 올린 게시글을 수정 할 수 없다")
@@ -75,14 +77,15 @@ class ArticleControllerTest : ControllerTestSupport() {
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
             editExpiryDate = LocalDateTime.now().plusDays(10),
+            dueDate = 10
         )
 
         Mockito.`when`(articleService.updateArticle(request)).thenReturn(response)
 
         // when // then
         mockMvc.perform(
-            MockMvcRequestBuilders.patch("/api/articles/{articleId}", request.id)
-                .queryParam("authorId", "1")
+            MockMvcRequestBuilders.patch("/api/articles/{article_id}", request.id)
+                .queryParam("author_id", "1")
                 .with(csrf())
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON),
@@ -110,14 +113,15 @@ class ArticleControllerTest : ControllerTestSupport() {
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
             editExpiryDate = LocalDateTime.now().plusDays(10),
+            dueDate = 10
         )
 
         Mockito.`when`(articleService.updateArticle(request)).thenReturn(response)
 
         // when // then
         mockMvc.perform(
-            MockMvcRequestBuilders.patch("/api/articles/{articleId}", request.id)
-                .queryParam("authorId", "1")
+            MockMvcRequestBuilders.patch("/api/articles/{article_id}", request.id)
+                .queryParam("author_id", "1")
                 .with(csrf())
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON),
@@ -130,6 +134,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.updatedAt").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.editExpiryDate").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.dueDate").exists())
     }
 
     @DisplayName("✅- 관리자가 직접 게시글을 수정한다")
@@ -151,14 +156,15 @@ class ArticleControllerTest : ControllerTestSupport() {
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
             editExpiryDate = LocalDateTime.now().plusDays(10),
+            dueDate = 10
         )
 
         Mockito.`when`(articleService.updateArticle(request)).thenReturn(response)
 
         // when // then
         mockMvc.perform(
-            MockMvcRequestBuilders.patch("/api/articles/{articleId}", request.id)
-                .queryParam("authorId", "1")
+            MockMvcRequestBuilders.patch("/api/articles/{article_id}", request.id)
+                .queryParam("author_id", "1")
                 .with(csrf())
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON),
@@ -171,6 +177,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             .andExpect(MockMvcResultMatchers.jsonPath("$.createdAt").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.updatedAt").exists())
             .andExpect(MockMvcResultMatchers.jsonPath("$.editExpiryDate").exists())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.dueDate").exists())
     }
 
     @DisplayName("❌- 관리자가 아닌 다른 사람이 올린 게시글을 삭제 할 수 없다")
@@ -185,8 +192,8 @@ class ArticleControllerTest : ControllerTestSupport() {
 
         // then // then
         mockMvc.perform(
-            MockMvcRequestBuilders.delete("/api/articles/{articleId}", articleId)
-                .queryParam("authorId", "1")
+            MockMvcRequestBuilders.delete("/api/articles/{article_id}", articleId)
+                .queryParam("author_id", "1")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON),
         )
@@ -206,8 +213,8 @@ class ArticleControllerTest : ControllerTestSupport() {
 
         // when // then
         mockMvc.perform(
-            MockMvcRequestBuilders.delete("/api/articles/{articleId}", articleId)
-                .queryParam("authorId", "1")
+            MockMvcRequestBuilders.delete("/api/articles/{article_id}", articleId)
+                .queryParam("author_id", "1")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON),
         )
@@ -227,8 +234,8 @@ class ArticleControllerTest : ControllerTestSupport() {
 
         // when // then
         mockMvc.perform(
-            MockMvcRequestBuilders.delete("/api/articles/{articleId}", articleId)
-                .queryParam("authorId", "1")
+            MockMvcRequestBuilders.delete("/api/articles/{article_id}", articleId)
+                .queryParam("author_id", "1")
                 .with(csrf())
                 .contentType(MediaType.APPLICATION_JSON),
         )
