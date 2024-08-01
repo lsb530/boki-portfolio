@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -43,6 +44,24 @@ class GlobalExceptionHandler {
             method = request.method,
         )
         return ResponseEntity(errorResponse, status)
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException::class)
+    fun handleMethodArgumentTypeMismatchException(
+        ex: MethodArgumentTypeMismatchException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
+        val paramName = ex.name
+        val paramValue = ex.value
+        val requiredType = ex.requiredType?.simpleName
+
+        return createErrorResponse(
+            type = "Invalid_Request",
+            status = HttpStatus.BAD_REQUEST,
+            ex = ex,
+            request = request,
+            customMsg = "$paramName 파라미터로 요청한 '$paramValue' 값은 '$requiredType' 타입으로 변환할 수 없습니다.",
+        )
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
