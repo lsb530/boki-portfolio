@@ -41,7 +41,6 @@ data class ArticleUpdateRequest(
     }
 }
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Schema(name = "게시글 정보 응답", description = "게시글 관련 응답 정보")
 data class ArticleResponse(
     @field:Schema(description = "DB id")
