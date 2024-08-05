@@ -7,9 +7,9 @@ import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import java.util.logging.Logger
 
-class AutoDtoTest : FunSpec(
+class AuthDtoTest : FunSpec(
     {
-        val logger = Logger.getLogger(AutoDtoTest::class.java.name)
+        val logger = Logger.getLogger(AuthDtoTest::class.java.name)
 
         context("회원가입") {
             val userRegisterFixture = UserRegisterRequest(

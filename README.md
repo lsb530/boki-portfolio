@@ -15,6 +15,11 @@
 
 **본인만의 프로젝트 기능을 아래의 내용에 추가해서 작성해주세요!**
 
+## Test Result (24.8.5)
+* passed: 52, ignored: 1
+
+![test_result.png](./imgs/test_result.png)
+
 ## 로그인
 
 * [x]  스프링 시큐리티를 활용한 로그인 기능 구현
