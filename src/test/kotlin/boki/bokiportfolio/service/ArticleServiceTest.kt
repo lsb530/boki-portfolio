@@ -6,6 +6,7 @@ import boki.bokiportfolio.dto.ArticleCreateRequest
 import boki.bokiportfolio.dto.ArticleResponse
 import boki.bokiportfolio.dto.ArticleUpdateRequest
 import boki.bokiportfolio.entity.Article
+import boki.bokiportfolio.entity.AuditEntity
 import boki.bokiportfolio.entity.User
 import boki.bokiportfolio.exception.CustomException
 import boki.bokiportfolio.repository.ArticleRepository
@@ -23,7 +24,9 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
+import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
+import java.time.LocalDateTime
 
 class ArticleServiceTest : BehaviorSpec(
     {
@@ -421,6 +424,198 @@ class ArticleServiceTest : BehaviorSpec(
 
                         verify { articleRepository.findByIdOrNull(articleId) }
                         verify(exactly = 0) { userRepository.findByIdOrNull(any()) }
+                    }
+                }
+            }
+        }
+
+        context("게시글 목록 조회 요청") {
+
+            Given("게시글 목록을 조회하려는 상황에서") {
+
+                // 리플렉션을 사용해서 임시로 필드값 변경
+                fun createArticleWithCreatedAt(
+                    id: Long,
+                    title: String,
+                    content: String,
+                    user: User,
+                    createdAt: LocalDateTime,
+                ): Article {
+                    val article = Article(
+                        id = id,
+                        title = title,
+                        content = content,
+                        user = user,
+                    )
+
+                    val createdAtField = AuditEntity::class.java.getDeclaredField("createdAt")
+                    createdAtField.isAccessible = true
+                    createdAtField.set(article, createdAt)
+                    createdAtField.isAccessible = false
+                    return article
+                }
+
+                // 리플렉션을 사용해서 삭제필드 수정
+                fun softRemoveArticle(article: Article) {
+                    val deletedAtField = AuditEntity::class.java.getDeclaredField("deletedAt")
+                    deletedAtField.isAccessible = true
+                    deletedAtField.set(article, LocalDateTime.now())
+                    deletedAtField.isAccessible = false
+                }
+
+                val user1 = User(
+                    id = 1L,
+                    email = "test@example.com",
+                    phoneNumber = "010-1234-5678",
+                    userId = "testUser",
+                    name = "홍길동",
+                    password = "Password1234!@",
+                    role = Role.USER,
+                )
+
+                val article1 = createArticleWithCreatedAt(
+                    id = 1L,
+                    title = "제목",
+                    content = "내용1",
+                    user = user1,
+                    createdAt = LocalDateTime.now(),
+                )
+
+                val article2 = createArticleWithCreatedAt(
+                    id = 2L,
+                    title = "오늘 날씨가 좋네요",
+                    content = "내용",
+                    user = user1,
+                    createdAt = LocalDateTime.now().plusSeconds(1),
+                )
+
+                val article3 = createArticleWithCreatedAt(
+                    id = 3L,
+                    title = "Today's weather is good",
+                    content = "내용",
+                    user = user1,
+                    createdAt = LocalDateTime.now().plusSeconds(2),
+                )
+
+                val user2 = User(
+                    id = 2L,
+                    email = "test2@example.com",
+                    phoneNumber = "010-2232-5678",
+                    userId = "testUser2",
+                    name = "이길동",
+                    password = "Password1234!@",
+                    role = Role.USER,
+                )
+
+                val article4 = createArticleWithCreatedAt(
+                    id = 4L,
+                    title = "오늘 점심메뉴가 좋네요",
+                    content = "내용",
+                    user = user2,
+                    createdAt = LocalDateTime.now().plusSeconds(3),
+                )
+
+                val article5 = createArticleWithCreatedAt(
+                    id = 5L,
+                    title = "Today's weather is bad",
+                    content = "내용",
+                    user = user2,
+                    createdAt = LocalDateTime.now().plusSeconds(4),
+                )
+
+                softRemoveArticle(article4)
+
+                val findArticles = mutableListOf(article1, article2, article3, article4, article5)
+
+                When("❌- 로그인을 하지 않은 유저가 게시글 목록을 조회하려 할 때") {
+
+                    Then("UNAUTHORIZED_ACCESS(인증 필요) 예외가 발생한다") {
+                        val ex = shouldThrow<CustomException> {
+                            articleService.getArticles(null, Sort.Direction.DESC)
+                        }
+                        ex.message shouldBe "인증이 필요한 요청입니다"
+
+                        verify(exactly = 0) { userRepository.findByIdOrNull(any()) }
+                    }
+                }
+
+                When("✅- 로그인한 유저가 title필드를 비워두고, 최신순으로 게시글 목록을 조회하려 할 때") {
+                    SecurityHelper.injectSecurityContext(1L, Role.USER)
+
+                    every {
+                        articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(
+                            null,
+                            Sort.Direction.DESC,
+                        )
+                    } returns findArticles.filter { it.deletedAt == null }.asReversed().toMutableList()
+
+                    Then("삭제된 글은 제외하고 최신 게시글 순서로 게시글 목록 조회를 성공한다") {
+                        val delArticleCnt = 1
+                        val response = articleService.getArticles(null, Sort.Direction.DESC)
+
+                        response.size shouldBe findArticles.size - delArticleCnt
+                        response.first().id shouldBe findArticles.last().id
+
+                        verify {
+                            articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(
+                                null,
+                                Sort.Direction.DESC,
+                            )
+                        }
+                    }
+                }
+
+                When("✅- 로그인한 유저가 title필드를 비워두고, 과거순으로 게시글 목록을 조회하려 할 때") {
+                    SecurityHelper.injectSecurityContext(1L, Role.USER)
+
+                    every {
+                        articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(
+                            null,
+                            Sort.Direction.ASC,
+                        )
+                    } returns findArticles
+
+                    Then("최신 게시글 순서로 게시글 목록 조회를 성공한다") {
+                        val response = articleService.getArticles(null, Sort.Direction.ASC)
+
+                        response.size shouldBe findArticles.size
+                        response.first().id shouldBe findArticles.first().id
+
+                        verify {
+                            articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(
+                                null,
+                                Sort.Direction.ASC,
+                            )
+                        }
+                    }
+                }
+
+                When("✅- 로그인한 유저가 title필드에 weather 입력 후 게시글 목록을 조회하려 할 때") {
+                    SecurityHelper.injectSecurityContext(1L, Role.USER)
+
+                    val titleReq = "weather"
+
+                    every {
+                        articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(
+                            titleReq,
+                            Sort.Direction.DESC,
+                        )
+                    } returns findArticles.filter { it.title.contains(titleReq) }.toMutableList()
+
+                    val weatherArticleSize =
+                        findArticles.filter { it.title.contains(titleReq) }.toMutableList().size
+
+                    Then("제목에 weather가 포함된 게시글 목록 조회를 성공한다") {
+                        val response = articleService.getArticles(titleReq, Sort.Direction.DESC)
+
+                        response.size shouldBe weatherArticleSize
+
+                        verify {
+                            articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(
+                                titleReq,
+                                Sort.Direction.DESC,
+                            )
+                        }
                     }
                 }
             }

@@ -35,7 +35,7 @@ class ArticleService(
     }
 
     // Criteria ✅
-    fun getArticles(title: String?, createdAtSortDirection: Sort.Direction): List<ArticleResponse> {
+    fun getArticles(title: String? = null, createdAtSortDirection: Sort.Direction): List<ArticleResponse> {
         verifyAuthentication()
 
         val findArticles = articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(title, createdAtSortDirection)

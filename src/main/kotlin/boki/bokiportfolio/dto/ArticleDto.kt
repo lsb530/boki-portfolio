@@ -6,7 +6,6 @@ import boki.bokiportfolio.validator.ArticleValidator.INVALID_ARTICLE_CONTENT_MSG
 import boki.bokiportfolio.validator.ArticleValidator.INVALID_ARTICLE_TITLE_MSG
 import boki.bokiportfolio.validator.ArticleValidator.isValidContent
 import boki.bokiportfolio.validator.ArticleValidator.isValidTitle
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
