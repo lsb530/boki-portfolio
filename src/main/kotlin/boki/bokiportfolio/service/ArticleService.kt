@@ -36,6 +36,8 @@ class ArticleService(
 
     // Criteria ✅
     fun getArticles(title: String?, createdAtSortDirection: Sort.Direction): List<ArticleResponse> {
+        verifyAuthentication()
+
         val findArticles = articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(title, createdAtSortDirection)
 
         return findArticles.map {
@@ -45,6 +47,8 @@ class ArticleService(
     }
 
     fun getArticle(articleId: Long): ArticleResponse {
+        verifyAuthentication()
+
         val findArticle = articleRepository.findByIdOrNull(articleId)
             ?: throw CustomException(ErrorCode.NOT_FOUND_ARTICLE)
         val dueDate = calculateDueDate(LocalDateTime.now().toLocalDate(), findArticle.createdAt.toLocalDate().plusDays(9))
@@ -83,20 +87,6 @@ class ArticleService(
         )
     }
 
-    fun verifyEditableArticle(today: LocalDate, editExpiryDate: LocalDate) {
-        if (today.isEqual(editExpiryDate) or today.isAfter(editExpiryDate)) {
-            throw CustomException(ErrorCode.INVALID_EDIT_ARTICLE)
-        }
-    }
-
-    fun hasToWarnEditAlarm(today: LocalDate, editWarningDate: LocalDate): Boolean {
-        return today.isEqual(editWarningDate)
-    }
-
-    fun calculateDueDate(today: LocalDate, editExpiryDate: LocalDate): Int {
-        return ChronoUnit.DAYS.between(today, editExpiryDate).toInt()
-    }
-
     @Transactional
     fun deleteArticle(articleId: Long, hasToSoftDel: Boolean = true) {
         verifyAuthentication()
@@ -109,5 +99,19 @@ class ArticleService(
         else {
             articleRepository.delete(article)
         }
+    }
+
+    fun verifyEditableArticle(today: LocalDate, editExpiryDate: LocalDate) {
+        if (today.isEqual(editExpiryDate) or today.isAfter(editExpiryDate)) {
+            throw CustomException(ErrorCode.INVALID_EDIT_ARTICLE)
+        }
+    }
+
+    fun hasToWarnEditAlarm(today: LocalDate, editWarningDate: LocalDate): Boolean {
+        return today.isEqual(editWarningDate)
+    }
+
+    fun calculateDueDate(today: LocalDate, editExpiryDate: LocalDate): Int {
+        return ChronoUnit.DAYS.between(today, editExpiryDate).toInt()
     }
 }

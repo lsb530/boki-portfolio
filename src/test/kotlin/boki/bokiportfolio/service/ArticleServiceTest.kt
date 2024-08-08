@@ -360,5 +360,70 @@ class ArticleServiceTest : BehaviorSpec(
                 }
             }
         }
+
+        context("게시글 단건 조회 요청") {
+
+            Given("게시글 번호(article_id), 글쓴이 번호(author_id) 정보를 갖고 글을 조회하려는 상황에서") {
+
+                val articleId = 1L
+
+                When("❌- 로그인을 하지 않은 유저가 글을 조회하려 할 때") {
+
+                    Then("UNAUTHORIZED_ACCESS(인증 필요) 예외가 발생한다") {
+                        val ex = shouldThrow<CustomException> {
+                            articleService.getArticle(articleId)
+                        }
+                        ex.message shouldBe "인증이 필요한 요청입니다"
+
+                        verify(exactly = 0) { userRepository.findByIdOrNull(any()) }
+                    }
+                }
+
+                When("❌- 존재하지 않는 게시글을 조회하려 할 때") {
+                    SecurityHelper.injectSecurityContext(1L, Role.USER)
+                    every { articleRepository.findByIdOrNull(articleId) } throws CustomException(ErrorCode.NOT_FOUND_ARTICLE)
+
+                    Then("NOT_FOUND_ARTICLE(게시글 없음) 예외가 발생한다") {
+                        val ex = shouldThrow<CustomException> {
+                            articleService.deleteArticle(articleId)
+                        }
+                        ex.errorCode shouldBe ErrorCode.NOT_FOUND_ARTICLE
+                        ex.message shouldBe "해당 게시글은 존재하지 않습니다"
+
+                        verify { articleRepository.findByIdOrNull(articleId) }
+                    }
+                }
+
+                When("✅- 로그인한 유저가 자신이 작성한 게시글을 조회하려 할 때") {
+                    SecurityHelper.injectSecurityContext(1L, Role.USER)
+
+                    val user = User(
+                        id = 1L,
+                        email = "test@example.com",
+                        phoneNumber = "010-1234-5678",
+                        userId = "testUser",
+                        name = "홍길동",
+                        password = "Password1234!@",
+                        role = Role.USER,
+                    )
+
+                    val findArticle = Article(
+                        id = 1L,
+                        title = "제목",
+                        content = "내용",
+                        user = user,
+                    )
+
+                    every { articleRepository.findByIdOrNull(articleId) } returns findArticle
+
+                    Then("저장된 게시글 조회를 성공한다") {
+                        articleService.getArticle(articleId).dueDate shouldBe 9
+
+                        verify { articleRepository.findByIdOrNull(articleId) }
+                        verify(exactly = 0) { userRepository.findByIdOrNull(any()) }
+                    }
+                }
+            }
+        }
     },
 )
