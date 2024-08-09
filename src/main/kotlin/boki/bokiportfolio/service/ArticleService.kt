@@ -101,8 +101,7 @@ class ArticleService(
 
         if (requireAddViewCnt == true and !redisService.hasKey(viewCntKey)) {
             // 10분동안 동일한 사람이 조회하면 조회수 증가 방지
-            // redisService.saveWithTemplate(viewCntKey, getAuthenticationName(), 60 * 10)
-            redisService.saveWithTemplate(viewCntKey, getAuthenticationName(), 10)
+            redisService.saveWithTemplate(viewCntKey, getAuthenticationName(), 60 * 10)
             findArticle.addViewCnt()
         }
         return ArticleResponse.from(article = findArticle, dueDate = dueDate)
