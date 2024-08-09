@@ -10,6 +10,9 @@ import boki.bokiportfolio.validator.SecurityManager.getAuthenticationName
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
+/**
+ * 게시글 생성 요청
+ */
 @Schema(name = "게시글 등록 요청", description = "게시글 등록 정보")
 data class ArticleCreateRequest(
     @field:Schema(description = "제목(200글자 이하)", example = "test title", required = true)
@@ -27,6 +30,10 @@ data class ArticleCreateRequest(
     }
 }
 
+/**
+ * 게시글 수정 요청
+ */
+@Schema(name = "게시글 수정 요청", description = "게시글 수정 정보")
 data class ArticleUpdateRequest(
     @field:Schema(description = "게시글 아이디", example = "1", required = true)
     val id: Long,
@@ -41,8 +48,60 @@ data class ArticleUpdateRequest(
     }
 }
 
-@Schema(name = "게시글 정보 응답", description = "게시글 관련 응답 정보")
-data class ArticleResponse(
+/**
+ * 게시글 목록 조회 응답
+ */
+@Schema(name = "게시글 요약 정보 응답(목록 요청)", description = "게시글 관련 다건 정보")
+data class ArticleSummaryResponse(
+    @field:Schema(description = "DB id")
+    val id: Long,
+
+    @field:Schema(description = "제목")
+    val title: String,
+
+    @field:Schema(description = "조회수")
+    val viewCnt: Int = 0,
+
+    @field:Schema(description = "좋아요 수")
+    val likeCnt: Int = 0,
+
+    @field:Schema(description = "좋아요 클릭 했는지 여부")
+    val hasLiked: Boolean = false,
+
+    @field:Schema(description = "글 작성자(아이디)")
+    val author: String,
+
+    @field:Schema(description = "댓글 수")
+    val commentCnt: Int = 0,
+
+    @field:Schema(description = "작성일")
+    val createdAt: LocalDateTime,
+
+    @field:Schema(description = "최종 수정일")
+    val updatedAt: LocalDateTime?,
+) {
+    companion object {
+        fun from(article: Article): ArticleSummaryResponse {
+            return ArticleSummaryResponse(
+                id = article.id!!,
+                title = article.title,
+                viewCnt = article.viewCnt,
+                likeCnt = article.likeUsers.size,
+                hasLiked = article.likeUsers.contains(getAuthenticationName().toLong()),
+                author = article.user.userId,
+                commentCnt = article.comments.size,
+                createdAt = article.createdAt,
+                updatedAt = article.updatedAt,
+            )
+        }
+    }
+}
+
+/**
+ * 게시글 단일 조회 응답
+ */
+@Schema(name = "게시글 상세 정보 응답(단일 요청)", description = "게시글 관련 단건 정보")
+data class ArticleDetailResponse(
     @field:Schema(description = "DB id")
     val id: Long,
 
@@ -83,8 +142,8 @@ data class ArticleResponse(
     var warningMessage: String? = null,
 ) {
     companion object {
-        fun from(article: Article, hasToWarnEditAlarm: Boolean = false, dueDate: Int): ArticleResponse {
-            val response = ArticleResponse(
+        fun from(article: Article, hasToWarnEditAlarm: Boolean = false, dueDate: Int): ArticleDetailResponse {
+            val response = ArticleDetailResponse(
                 id = article.id!!,
                 title = article.title,
                 content = article.content,

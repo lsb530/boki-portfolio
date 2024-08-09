@@ -1,0 +1,92 @@
+server:
+  port: 8080
+  shutdown: graceful
+  error.whitelabel.enabled: false
+
+spring:
+  application:
+    name: boki-portfolio
+
+  h2:
+    console:
+      enabled: true
+
+  datasource:
+#    url: jdbc:h2:mem:~/bokiPortFolioApplication
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  sql:
+    init:
+      mode: always
+
+  jpa:
+    hibernate:
+#      ddl-auto: create-drop
+#      ddl-auto: none
+      ddl-auto: update
+    generate-ddl: true
+    show-sql: true
+    properties:
+      hibernate:
+        show_sql: true
+    defer-datasource-initialization: true
+
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+  cache:
+    type: redis
+
+
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0B # 파일을 디스크에 저장하지 않고 메모리에 저장하는 최소 크기 (default: 0B)
+      #      location: /users/boki/temp # 업로드된 파일이 임시로 저장되는 디스크 위치 (default: WAS가 결정)
+      max-file-size: 5MB # 개별 파일의 최대 사이즈 (default: 1MB)
+      max-request-size: 20MB # 전체 요청의 최대 사이즈 (default: 10MB)
+
+
+springdoc:
+  api-docs:
+    path: /api/docs:json
+
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
+    groups-order: desc
+    disable-swagger-default-url: true
+    query-config-enabled: true
+    use-root-path: false
+    path: /api/docs:ui
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    jmx:
+      exposure:
+        exclude: "*"
+    web:
+      base-path: /management
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-components: always
+
+boki:
+  token:
+    secret: ${jwt-secret}
+  minio:
+    endpoint: "http://localhost:9000"
+#    bucket-name: "code-boki"
+    bucket-name: "test"
+    access-key: u3wwfzmm1esw9NrSLBKo
+    secret-key: 9uqqlMo4ULvrU2Jjmkls4Jhmx5Nwnqwu06f9kdAT
+
+

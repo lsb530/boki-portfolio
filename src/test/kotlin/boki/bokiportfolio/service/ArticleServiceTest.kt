@@ -3,7 +3,7 @@ package boki.bokiportfolio.service
 import boki.bokiportfolio.common.ErrorCode
 import boki.bokiportfolio.common.Role
 import boki.bokiportfolio.dto.ArticleCreateRequest
-import boki.bokiportfolio.dto.ArticleResponse
+import boki.bokiportfolio.dto.ArticleDetailResponse
 import boki.bokiportfolio.dto.ArticleUpdateRequest
 import boki.bokiportfolio.entity.Article
 import boki.bokiportfolio.entity.AuditEntity
@@ -89,7 +89,7 @@ class ArticleServiceTest : BehaviorSpec(
 
                     Then("게시글 등록에 성공하고, 성공 결과를 반환한다") {
                         val response = articleService.createArticle(request)
-                        response shouldBe ArticleResponse.from(article = savedArticle, dueDate = 9)
+                        response shouldBe ArticleDetailResponse.from(article = savedArticle, dueDate = 9)
 
                         verify { userRepository.findByIdOrNull(any()) }
                         verify { articleRepository.save(any()) }
@@ -205,7 +205,7 @@ class ArticleServiceTest : BehaviorSpec(
 
                     Then("게시글 수정에 성공하고, 성공 결과를 반환한다") {
                         val response = articleService.updateArticle(request)
-                        response shouldBe ArticleResponse.from(
+                        response shouldBe ArticleDetailResponse.from(
                             article = updatedArticle, hasToWarnEditAlarm = false,
                             dueDate = 9,
                         )
@@ -252,7 +252,7 @@ class ArticleServiceTest : BehaviorSpec(
 
                     Then("'하루 뒤 수정 불가' 경고 알내문과 함께 게시글 수정에 성공하고, 성공 결과를 반환한다") {
                         val response = articleService.updateArticle(request)
-                        response shouldBe ArticleResponse.from(
+                        response shouldBe ArticleDetailResponse.from(
                             article = updatedArticle, hasToWarnEditAlarm = true,
                             dueDate = 9,
                         )

@@ -2,7 +2,8 @@ package boki.bokiportfolio.service
 
 import boki.bokiportfolio.common.ErrorCode
 import boki.bokiportfolio.dto.ArticleCreateRequest
-import boki.bokiportfolio.dto.ArticleResponse
+import boki.bokiportfolio.dto.ArticleDetailResponse
+import boki.bokiportfolio.dto.ArticleSummaryResponse
 import boki.bokiportfolio.dto.ArticleUpdateRequest
 import boki.bokiportfolio.exception.CustomException
 import boki.bokiportfolio.repository.ArticleRepository
@@ -26,14 +27,14 @@ class ArticleService(
     private val redisService: RedisService,
 ) {
     @Transactional
-    fun createArticle(articleCreateRequest: ArticleCreateRequest): ArticleResponse {
+    fun createArticle(articleCreateRequest: ArticleCreateRequest): ArticleDetailResponse {
         verifyAuthentication()
 
         val userId = SecurityContextHolder.getContext().authentication.name
         val user = userRepository.findByIdOrNull(userId.toLong()) ?: throw CustomException(ErrorCode.NOT_FOUND_USER)
         val newArticle = articleRepository.save(articleCreateRequest.toEntity(user))
         val dueDate = calculateDueDate(LocalDateTime.now().toLocalDate(), newArticle.createdAt.toLocalDate().plusDays(9))
-        return ArticleResponse.from(article = newArticle, dueDate = dueDate)
+        return ArticleDetailResponse.from(article = newArticle, dueDate = dueDate)
     }
 
     @Transactional
@@ -47,19 +48,16 @@ class ArticleService(
     }
 
     // Criteria ✅
-    fun getArticles(title: String? = null, createdAtSortDirection: Sort.Direction): List<ArticleResponse> {
+    fun getArticles(title: String? = null, createdAtSortDirection: Sort.Direction): List<ArticleSummaryResponse> {
         verifyAuthentication()
 
         val findArticles = articleRepository.findArticlesContainsTitleAndCreatedAtSortDirection(title, createdAtSortDirection)
 
-        return findArticles.map {
-            val dueDate = calculateDueDate(LocalDateTime.now().toLocalDate(), it.createdAt.toLocalDate().plusDays(9))
-            return@map ArticleResponse.from(article = it, dueDate = dueDate)
-        }
+        return findArticles.map { ArticleSummaryResponse.from(it) }
     }
 
     @Transactional
-    fun likeArticle(articleId: Long): ArticleResponse {
+    fun likeArticle(articleId: Long): ArticleDetailResponse {
         verifyAuthentication()
 
         val findArticle = articleRepository.findByIdOrNull(articleId)
@@ -78,7 +76,7 @@ class ArticleService(
     }
 
     @Transactional
-    fun cancelLikeArticle(articleId: Long): ArticleResponse {
+    fun cancelLikeArticle(articleId: Long): ArticleDetailResponse {
         verifyAuthentication()
 
         val findArticle = articleRepository.findByIdOrNull(articleId)
@@ -90,7 +88,7 @@ class ArticleService(
     }
 
     @Transactional
-    fun getArticle(articleId: Long, requireAddViewCnt: Boolean? = true): ArticleResponse {
+    fun getArticle(articleId: Long, requireAddViewCnt: Boolean? = true): ArticleDetailResponse {
         verifyAuthentication()
 
         val findArticle = articleRepository.findByIdOrNull(articleId)
@@ -104,11 +102,11 @@ class ArticleService(
             redisService.saveWithTemplate(viewCntKey, getAuthenticationName(), 60 * 10)
             findArticle.addViewCnt()
         }
-        return ArticleResponse.from(article = findArticle, dueDate = dueDate)
+        return ArticleDetailResponse.from(article = findArticle, dueDate = dueDate)
     }
 
     @Transactional
-    fun updateArticle(articleUpdateRequest: ArticleUpdateRequest): ArticleResponse {
+    fun updateArticle(articleUpdateRequest: ArticleUpdateRequest): ArticleDetailResponse {
         verifyAuthentication()
 
         val (articleId, updateTitle, updateContent) = articleUpdateRequest
@@ -129,7 +127,7 @@ class ArticleService(
 
         val dueDate = calculateDueDate(LocalDateTime.now().toLocalDate(), updatedArticle.createdAt.toLocalDate().plusDays(9))
 
-        return ArticleResponse.from(
+        return ArticleDetailResponse.from(
             article = updatedArticle,
             hasToWarnEditAlarm = hasToWarnEditAlarm(
                 today = LocalDateTime.now().toLocalDate(),

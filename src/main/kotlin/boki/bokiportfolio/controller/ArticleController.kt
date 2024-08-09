@@ -3,7 +3,8 @@ package boki.bokiportfolio.controller
 import boki.bokiportfolio.common.ErrorCode
 import boki.bokiportfolio.controller.doc.ArticleApiSpec
 import boki.bokiportfolio.dto.ArticleCreateRequest
-import boki.bokiportfolio.dto.ArticleResponse
+import boki.bokiportfolio.dto.ArticleDetailResponse
+import boki.bokiportfolio.dto.ArticleSummaryResponse
 import boki.bokiportfolio.dto.ArticleUpdateRequest
 import boki.bokiportfolio.exception.CustomException
 import boki.bokiportfolio.service.ArticleService
@@ -44,7 +45,7 @@ class ArticleController(
     override fun createArticle(
         @RequestPart(name = "article", required = true) articleCreateRequest: ArticleCreateRequest,
         @RequestPart(name = "imgFile", required = false) imgFile: MultipartFile?,
-    ): ResponseEntity<ArticleResponse> {
+    ): ResponseEntity<ArticleDetailResponse> {
 
         val newArticleResponse = articleService.createArticle(articleCreateRequest)
         val location = URI.create("/api/articles/${newArticleResponse.id}")
@@ -68,17 +69,17 @@ class ArticleController(
         @RequestParam(name = "title", required = false) title: String?,
         @RequestParam(name = "created_at_order_by", required = true, defaultValue = "DESC")
         createdAtSortDirection: Sort.Direction,
-    ): ResponseEntity<List<ArticleResponse>> {
+    ): ResponseEntity<List<ArticleSummaryResponse>> {
         return ResponseEntity.ok().body(articleService.getArticles(title, createdAtSortDirection))
     }
 
     @PatchMapping("/{article_id}/like")
-    override fun likeArticle(@PathVariable(name = "article_id") articleId: Long): ResponseEntity<ArticleResponse> {
+    override fun likeArticle(@PathVariable(name = "article_id") articleId: Long): ResponseEntity<ArticleDetailResponse> {
         return ResponseEntity.ok().body(articleService.likeArticle(articleId))
     }
 
     @PatchMapping("/{article_id}/cancel-like")
-    override fun cancelLikeArticle(@PathVariable(name = "article_id") articleId: Long): ResponseEntity<ArticleResponse> {
+    override fun cancelLikeArticle(@PathVariable(name = "article_id") articleId: Long): ResponseEntity<ArticleDetailResponse> {
         return ResponseEntity.ok().body(articleService.cancelLikeArticle(articleId))
     }
 
@@ -128,7 +129,7 @@ class ArticleController(
         @PathVariable(name = "article_id") articleId: Long,
         @RequestParam(name = "author_id") authorId: Long,
         @RequestBody articleUpdateRequest: ArticleUpdateRequest,
-    ): ResponseEntity<ArticleResponse> {
+    ): ResponseEntity<ArticleDetailResponse> {
         return ResponseEntity.ok(articleService.updateArticle(articleUpdateRequest.copy(id = articleId)))
     }
 

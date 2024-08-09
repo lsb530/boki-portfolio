@@ -1,7 +1,7 @@
 package boki.bokiportfolio.controller
 
 import boki.bokiportfolio.dto.ArticleCreateRequest
-import boki.bokiportfolio.dto.ArticleResponse
+import boki.bokiportfolio.dto.ArticleDetailResponse
 import boki.bokiportfolio.dto.ArticleUpdateRequest
 import boki.bokiportfolio.support.ControllerTestSupport
 import org.junit.jupiter.api.DisplayName
@@ -28,7 +28,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             title = "테스트 제목",
             content = "테스트 내용",
         )
-        val response = ArticleResponse(
+        val response = ArticleDetailResponse(
             id = 1L,
             title = request.title,
             content = request.content,
@@ -84,7 +84,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             title = "수정할 제목",
             content = "수정할 내용",
         )
-        val response = ArticleResponse(
+        val response = ArticleDetailResponse(
             id = 1L,
             title = request.title ?: "",
             content = request.content ?: "",
@@ -120,7 +120,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             title = "수정할 제목",
             content = "수정할 내용",
         )
-        val response = ArticleResponse(
+        val response = ArticleDetailResponse(
             id = 1L,
             title = request.title ?: "",
             content = request.content ?: "",
@@ -163,7 +163,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             title = "수정할 제목",
             content = "수정할 내용",
         )
-        val response = ArticleResponse(
+        val response = ArticleDetailResponse(
             id = 1L,
             title = request.title ?: "",
             content = request.content ?: "",
