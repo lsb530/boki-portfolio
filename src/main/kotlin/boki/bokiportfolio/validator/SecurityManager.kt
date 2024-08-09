@@ -16,12 +16,14 @@ object SecurityManager {
         }
     }
 
-    fun verifyAdminOrMine(id: String) {
+    fun verifyAdminOrMine(id: String, errorCode: ErrorCode? = null) {
         val authentication = SecurityContextHolder.getContext().authentication
         val authorities = authentication.authorities.map(GrantedAuthority::getAuthority)
 
-        if (!(authorities.contains(Role.ADMIN.roleName) or (authentication.name == id))) {
-            throw CustomException(ErrorCode.FORBIDDEN_ACCESS)
+        val hasAdminRole = authorities.find { it == Role.ADMIN.roleName }
+
+        if (hasAdminRole == null && authentication.name != id) {
+            throw CustomException(errorCode ?: ErrorCode.FORBIDDEN_ACCESS)
         }
     }
 
