@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
+import jakarta.persistence.OneToMany
 
 @Entity
 class Article(
@@ -39,6 +40,9 @@ class Article(
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     @JoinColumn(name = "user_id", foreignKey = ForeignKey(name = "article_user_key"))
     val user: User,
+
+    @OneToMany(mappedBy = "article")
+    val comments: MutableList<Comment> = mutableListOf(),
 ) : AuditEntity() {
 
     fun addViewCnt() {

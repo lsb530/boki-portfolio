@@ -140,6 +140,9 @@ data class ArticleDetailResponse(
 
     @field:Schema(description = "수정 불가 하루 전 경고 알림")
     var warningMessage: String? = null,
+
+    @field:Schema(description = "댓글 리스트")
+    val comments: MutableList<CommentResponse> = mutableListOf()
 ) {
     companion object {
         fun from(article: Article, hasToWarnEditAlarm: Boolean = false, dueDate: Int): ArticleDetailResponse {
@@ -155,7 +158,10 @@ data class ArticleDetailResponse(
                 createdAt = article.createdAt,
                 updatedAt = article.updatedAt,
                 editExpiryDate = article.createdAt.plusDays(10),
-                dueDate = dueDate
+                dueDate = dueDate,
+                comments = article.comments
+                    .filter { it.deletedAt == null }
+                    .map { CommentResponse.from(it, article.user) }.toMutableList()
             )
             if (hasToWarnEditAlarm) {
                 response.warningMessage = "게시글 수정 불가 하루 전 입니다!"
