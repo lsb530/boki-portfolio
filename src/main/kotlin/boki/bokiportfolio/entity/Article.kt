@@ -26,10 +26,17 @@ class Article(
     @Column(nullable = true, unique = false)
     var imgFileName: String? = null,
 
+    @Column(nullable = false, unique = false)
+    var viewCnt: Int = 0,
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     @JoinColumn(name = "user_id", foreignKey = ForeignKey(name = "article_user_key"))
     val user: User,
 ) : AuditEntity() {
+
+    fun addViewCnt() {
+        viewCnt += 1
+    }
 
     companion object {
         fun createArticle(title: String, content: String, user: User): Article {

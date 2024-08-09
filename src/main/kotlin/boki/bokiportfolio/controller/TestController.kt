@@ -2,11 +2,14 @@ package boki.bokiportfolio.controller
 
 import boki.bokiportfolio.service.ArticleService
 import boki.bokiportfolio.service.MinioService
+import boki.bokiportfolio.service.RedisService
 import org.springframework.core.io.ByteArrayResource
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -15,6 +18,8 @@ import java.nio.file.Paths
 class TestController(
     private val articleService: ArticleService,
     private val minioService: MinioService,
+    private val redisService: RedisService,
+    private val redisTemplate: RedisTemplate<String, Any>
 ) {
 
     @GetMapping
@@ -49,6 +54,17 @@ class TestController(
 
             return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(imageResource)
         }
+    }
+
+    // @GetMapping("/test/articles/{article_id}")
+    @GetMapping("/test/redis")
+    fun redisTest(
+        @RequestParam(name = "key", required = true) key: String,
+        @RequestParam(name = "value", required = true) value: String,
+        @RequestParam(name = "limit", required = true) limit: Long,
+    ) {
+        // redisService.save(key, value)
+        redisService.saveWithTemplate(key, value, limit)
     }
 
 }

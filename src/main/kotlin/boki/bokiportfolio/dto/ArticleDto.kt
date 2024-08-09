@@ -54,6 +54,9 @@ data class ArticleResponse(
     @field:Schema(description = "이미지 파일명")
     val imgFileName: String? = null,
 
+    @field:Schema(description = "조회수")
+    val viewCnt: Int = 0,
+
     @field:Schema(description = "글 작성자(아이디)")
     val author: String,
 
@@ -79,6 +82,7 @@ data class ArticleResponse(
                 title = article.title,
                 content = article.content,
                 imgFileName = article.imgFileName,
+                viewCnt = article.viewCnt,
                 author = article.user.userId,
                 createdAt = article.createdAt,
                 updatedAt = article.updatedAt,

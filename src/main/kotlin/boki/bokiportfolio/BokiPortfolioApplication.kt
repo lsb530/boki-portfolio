@@ -7,8 +7,10 @@ import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
+import org.springframework.cache.annotation.EnableCaching
 import org.springframework.context.annotation.Bean
 
+@EnableCaching
 @EnableConfigurationProperties(MinioProperties::class)
 @SpringBootApplication
 class BokiPortfolioApplication {

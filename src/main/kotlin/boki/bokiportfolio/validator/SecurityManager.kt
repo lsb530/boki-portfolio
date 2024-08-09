@@ -33,4 +33,6 @@ object SecurityManager {
             throw CustomException(ErrorCode.FORBIDDEN_ACCESS)
         }
     }
+
+    fun getAuthenticationName(): String = SecurityContextHolder.getContext().authentication.name.toString()
 }

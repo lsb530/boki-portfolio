@@ -28,6 +28,16 @@ services:
       - mysql-data:/var/lib/mysql
       - ./init.sql:/data/application/init.sql
 
+  redis:
+    image: redis
+    container_name: redis_container
+    labels:
+      - "name=redis"
+      - "mode=standalone"
+    restart: always
+    ports:
+      - 6379:6379
+
 volumes:
   mysql-data:
   minio_data:

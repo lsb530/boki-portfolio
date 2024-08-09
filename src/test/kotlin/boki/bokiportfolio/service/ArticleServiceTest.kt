@@ -32,11 +32,12 @@ class ArticleServiceTest : BehaviorSpec(
     {
         val userRepository = mockk<UserRepository>()
         val articleRepository = mockk<ArticleRepository>()
+        val redisService = mockk<RedisService>()
 
 //        val articleService = ArticleService(userRepository, articleRepository)
         // 내부 함수를 호출하기 위해서 spy로 선언해 줄 필요가 있었음..
         val articleService = spyk(
-            ArticleService(userRepository, articleRepository),
+            ArticleService(userRepository, articleRepository, redisService),
             recordPrivateCalls = true,
         )
 
@@ -418,6 +419,8 @@ class ArticleServiceTest : BehaviorSpec(
                     )
 
                     every { articleRepository.findByIdOrNull(articleId) } returns findArticle
+                    every { redisService.hasKey(any()) } returns false
+                    every { redisService.saveWithTemplate(any(), any(), any()) } just Runs
 
                     Then("저장된 게시글 조회를 성공한다") {
                         articleService.getArticle(articleId).dueDate shouldBe 9

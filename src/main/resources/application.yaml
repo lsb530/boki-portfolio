@@ -8,7 +8,7 @@ spring:
     name: boki-portfolio
   profiles:
     active: dev
-    include: datasource, jpa, logging, swagger, actuator, servlet
+    include: datasource, jpa, logging, swagger, actuator, servlet, redis
 
 boki:
   token:
