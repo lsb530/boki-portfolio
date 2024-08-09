@@ -8,6 +8,7 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import org.springframework.http.MediaType
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
@@ -35,17 +36,31 @@ class ArticleControllerTest : ControllerTestSupport() {
             createdAt = LocalDateTime.now(),
             updatedAt = null,
             editExpiryDate = LocalDateTime.now().plusDays(10),
-            dueDate = 10
+            dueDate = 10,
         )
 
         Mockito.`when`(articleService.createArticle(request)).thenReturn(response)
 
+        val jsonPart = MockMultipartFile(
+            "article",  // form-data field name
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsBytes(request),
+        )
+
+        val imgFile = MockMultipartFile(
+            "imgFile",  // form-data field name
+            "test-image.jpg",  // original filename
+            MediaType.IMAGE_JPEG_VALUE,  // content type
+            "test image content".toByteArray(),  // file content
+        )
+
         // when // then
         mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/articles")
-                .with(csrf())
-                .content(objectMapper.writeValueAsString(request))
-                .contentType(MediaType.APPLICATION_JSON),
+            MockMvcRequestBuilders.multipart("/api/articles")
+                .file(jsonPart)
+                // .file(imgFile)
+                .with(csrf()),
         )
             .andDo(MockMvcResultHandlers.print())
             .andExpect(MockMvcResultMatchers.status().isCreated())
@@ -77,7 +92,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
             editExpiryDate = LocalDateTime.now().plusDays(10),
-            dueDate = 10
+            dueDate = 10,
         )
 
         Mockito.`when`(articleService.updateArticle(request)).thenReturn(response)
@@ -113,7 +128,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
             editExpiryDate = LocalDateTime.now().plusDays(10),
-            dueDate = 10
+            dueDate = 10,
         )
 
         Mockito.`when`(articleService.updateArticle(request)).thenReturn(response)
@@ -156,7 +171,7 @@ class ArticleControllerTest : ControllerTestSupport() {
             createdAt = LocalDateTime.now(),
             updatedAt = LocalDateTime.now(),
             editExpiryDate = LocalDateTime.now().plusDays(10),
-            dueDate = 10
+            dueDate = 10,
         )
 
         Mockito.`when`(articleService.updateArticle(request)).thenReturn(response)

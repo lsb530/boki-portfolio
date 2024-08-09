@@ -1,8 +1,10 @@
 package boki.bokiportfolio.support
 
+import boki.bokiportfolio.config.MinioConfig
 import boki.bokiportfolio.config.SecurityConfig
 import boki.bokiportfolio.controller.ArticleController
 import boki.bokiportfolio.controller.AuthController
+import boki.bokiportfolio.prop.MinioProperties
 import boki.bokiportfolio.security.CustomAuthenticationEntryPoint
 import boki.bokiportfolio.security.CustomUserDetailsService
 import boki.bokiportfolio.security.JwtAuthFilter
@@ -11,6 +13,8 @@ import boki.bokiportfolio.service.ArticleService
 import boki.bokiportfolio.service.AuthService
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
+import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Import
@@ -24,7 +28,9 @@ import org.springframework.web.context.WebApplicationContext
         ArticleController::class,
     ],
 )
-@Import(SecurityConfig::class)
+@Import(SecurityConfig::class, MinioConfig::class)
+@EnableConfigurationProperties(MinioProperties::class)
+@ConfigurationPropertiesScan("boki.minio")
 @EnableMethodSecurity(proxyTargetClass = true, prePostEnabled = true)
 abstract class ControllerTestSupport {
 

@@ -44,6 +44,7 @@ val koTestVersion = "5.9.0"
 val koTestAllureExtensionVersion = "1.4.0"
 val mockkVersion = "1.13.12"
 val springMockkVersion = "4.0.2"
+val minioVersion = "8.5.11"
 //val jdslVersion = "3.5.1"
 
 dependencies {
@@ -85,6 +86,9 @@ dependencies {
 
     // AOP
     implementation("org.springframework.boot:spring-boot-starter-aop")
+
+    // MinIO
+    implementation("io.minio:minio:$minioVersion")
 
     // Kotlin JDSL from line
 //    implementation("com.linecorp.kotlin-jdsl:jpql-dsl:$jdslVersion")

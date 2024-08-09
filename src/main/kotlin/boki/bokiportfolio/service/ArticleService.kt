@@ -34,6 +34,16 @@ class ArticleService(
         return ArticleResponse.from(article = newArticle, dueDate = dueDate)
     }
 
+    @Transactional
+    fun updateAttachImgFileName(articleId: Long, filename: String) {
+        val findArticle = articleRepository.findByIdOrNull(articleId)
+            ?: throw CustomException(ErrorCode.NOT_FOUND_ARTICLE)
+        findArticle.apply {
+            this.imgFileName = filename
+        }
+        articleRepository.save(findArticle)
+    }
+
     // Criteria ✅
     fun getArticles(title: String? = null, createdAtSortDirection: Sort.Direction): List<ArticleResponse> {
         verifyAuthentication()

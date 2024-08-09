@@ -23,6 +23,9 @@ class Article(
     @Column(nullable = false, unique = false)
     var content: String,
 
+    @Column(nullable = true, unique = false)
+    var imgFileName: String? = null,
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST, CascadeType.MERGE])
     @JoinColumn(name = "user_id", foreignKey = ForeignKey(name = "article_user_key"))
     val user: User,

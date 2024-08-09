@@ -8,8 +8,14 @@ spring:
     name: boki-portfolio
   profiles:
     active: dev
-    include: datasource, jpa, logging, swagger, actuator
+    include: datasource, jpa, logging, swagger, actuator, servlet
 
 boki:
   token:
     secret: ${jwt-secret}
+  minio:
+    endpoint: "http://localhost:9000"
+#    bucket-name: "code-boki"
+    bucket-name: "test"
+    access-key: u3wwfzmm1esw9NrSLBKo
+    secret-key: 9uqqlMo4ULvrU2Jjmkls4Jhmx5Nwnqwu06f9kdAT

@@ -21,6 +21,7 @@ import java.net.URI
 class AuthController(
     private val authService: AuthService,
 ) : AuthApiSpec {
+
     @PostMapping("/signup")
     override fun signup(@RequestBody userRegisterRequest: UserRegisterRequest): ResponseEntity<UserResponse> {
         val newUserResponse = authService.signup(userRegisterRequest)

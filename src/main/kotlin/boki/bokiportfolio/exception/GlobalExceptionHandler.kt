@@ -3,6 +3,7 @@ package boki.bokiportfolio.exception
 import com.fasterxml.jackson.databind.JsonMappingException
 import jakarta.servlet.http.HttpServletRequest
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -13,11 +14,18 @@ import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.multipart.MaxUploadSizeExceededException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
 
     private val log = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+
+    @Value("\${spring.servlet.multipart.max-request-size}")
+    private lateinit var maxRequestSize: String
+
+    @Value("\${spring.servlet.multipart.max-file-size}")
+    private lateinit var maxFileSize: String
 
     private fun createErrorResponse(
         type: String,
@@ -44,6 +52,30 @@ class GlobalExceptionHandler {
             method = request.method,
         )
         return ResponseEntity(errorResponse, status)
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException::class)
+    fun handleMaxUploadSizeExceededException(
+        ex: MaxUploadSizeExceededException,
+        request: HttpServletRequest
+    ): ResponseEntity<ErrorResponse> {
+        val contentLengthInBytes = request.contentLengthLong
+        val contentLengthInMB = contentLengthInBytes / (1024.0 * 1024.0)
+        val contentLengthInGB = contentLengthInBytes / (1024.0 * 1024.0 * 1024.0)
+
+        val formattedContentLength = if (contentLengthInBytes > 1024 * 1024 * 1024) {
+            String.format("%.1f", contentLengthInGB) + " GB"
+        } else {
+            String.format("%.1f", contentLengthInMB) + " MB"
+        }
+
+        return createErrorResponse(
+            type = "Invalid_Request",
+            status = HttpStatus.PAYLOAD_TOO_LARGE,
+            ex = ex,
+            request = request,
+            customMsg = "업로드 파일 크기 초과(요청한 파일 크기: ${formattedContentLength}). (단일 / 전체) 파일 업로드 제한: $maxFileSize / $maxRequestSize",
+        )
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException::class)

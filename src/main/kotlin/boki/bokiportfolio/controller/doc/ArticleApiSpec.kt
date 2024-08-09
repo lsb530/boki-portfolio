@@ -11,23 +11,39 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.RequestPart
+import org.springframework.web.multipart.MultipartFile
 
 @Tag(name = "B. 게시글 API")
 interface ArticleApiSpec {
 
     @Operation(summary = "게시글 등록", security = [SecurityRequirement(name = "accessToken")])
-    fun createArticle(@RequestBody articleCreateRequest: ArticleCreateRequest): ResponseEntity<ArticleResponse>
+    fun createArticle(
+        @RequestPart(name = "article", required = true) articleCreateRequest: ArticleCreateRequest,
+        @RequestPart(name = "imgFile", required = false) imgFile: MultipartFile?,
+    ): ResponseEntity<ArticleResponse>
 
     @Operation(summary = "게시글 수정", security = [SecurityRequirement(name = "accessToken")])
-    fun updateArticle(@PathVariable articleId: Long, @RequestParam authorId: Long, @RequestBody articleUpdateRequest: ArticleUpdateRequest): ResponseEntity<ArticleResponse>
+    fun updateArticle(
+        @PathVariable articleId: Long,
+        @RequestParam authorId: Long,
+        @RequestBody articleUpdateRequest: ArticleUpdateRequest,
+    ): ResponseEntity<ArticleResponse>
 
     @Operation(summary = "게시글 목록 조회", security = [SecurityRequirement(name = "accessToken")])
-    fun getArticles(@RequestParam title: String?, @RequestParam createdAtSortDirection: Sort.Direction): ResponseEntity<List<ArticleResponse>>
+    fun getArticles(
+        @RequestParam title: String?,
+        @RequestParam createdAtSortDirection: Sort.Direction,
+    ): ResponseEntity<List<ArticleResponse>>
 
     @Operation(summary = "게시글 단건 조회", security = [SecurityRequirement(name = "accessToken")])
-    fun getArticle(@PathVariable articleId: Long): ResponseEntity<ArticleResponse>
+    fun getArticle(@PathVariable articleId: Long): ResponseEntity<Any>
 
     @Operation(summary = "게시글 삭제", security = [SecurityRequirement(name = "accessToken")])
-    fun deleteArticle(@PathVariable articleId: Long, @RequestParam authorId: Long, @RequestParam softDel: Boolean): ResponseEntity<Unit>
+    fun deleteArticle(
+        @PathVariable articleId: Long,
+        @RequestParam authorId: Long,
+        @RequestParam softDel: Boolean,
+    ): ResponseEntity<Unit>
 }
 
