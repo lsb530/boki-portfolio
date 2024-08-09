@@ -59,7 +59,38 @@ class ArticleService(
     }
 
     @Transactional
-    fun getArticle(articleId: Long): ArticleResponse {
+    fun likeArticle(articleId: Long): ArticleResponse {
+        verifyAuthentication()
+
+        val findArticle = articleRepository.findByIdOrNull(articleId)
+            ?: throw CustomException(ErrorCode.NOT_FOUND_ARTICLE)
+
+        val currentAuthUserId = getAuthenticationName().toLong()
+
+        if (findArticle.user.id == currentAuthUserId) {
+            throw CustomException(ErrorCode.INVALID_LIKE_REQUEST)
+        }
+        else {
+            findArticle.likeArticle(currentAuthUserId)
+        }
+
+        return getArticle(articleId, false)
+    }
+
+    @Transactional
+    fun cancelLikeArticle(articleId: Long): ArticleResponse {
+        verifyAuthentication()
+
+        val findArticle = articleRepository.findByIdOrNull(articleId)
+            ?: throw CustomException(ErrorCode.NOT_FOUND_ARTICLE)
+
+        findArticle.cancelLikeArticle(getAuthenticationName().toLong())
+
+        return getArticle(articleId, false)
+    }
+
+    @Transactional
+    fun getArticle(articleId: Long, requireAddViewCnt: Boolean? = true): ArticleResponse {
         verifyAuthentication()
 
         val findArticle = articleRepository.findByIdOrNull(articleId)
@@ -68,9 +99,10 @@ class ArticleService(
 
         val viewCntKey = "article:$articleId:viewer:${getAuthenticationName()}"
 
-        if(!redisService.hasKey(viewCntKey)) {
+        if (requireAddViewCnt == true and !redisService.hasKey(viewCntKey)) {
             // 10분동안 동일한 사람이 조회하면 조회수 증가 방지
-            redisService.saveWithTemplate(viewCntKey, getAuthenticationName(), 60 * 10)
+            // redisService.saveWithTemplate(viewCntKey, getAuthenticationName(), 60 * 10)
+            redisService.saveWithTemplate(viewCntKey, getAuthenticationName(), 10)
             findArticle.addViewCnt()
         }
         return ArticleResponse.from(article = findArticle, dueDate = dueDate)

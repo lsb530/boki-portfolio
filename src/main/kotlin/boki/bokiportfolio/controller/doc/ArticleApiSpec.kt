@@ -36,6 +36,12 @@ interface ArticleApiSpec {
         @RequestParam createdAtSortDirection: Sort.Direction,
     ): ResponseEntity<List<ArticleResponse>>
 
+    @Operation(summary = "게시글 좋아요", security = [SecurityRequirement(name = "accessToken")])
+    fun likeArticle(@PathVariable articleId: Long): ResponseEntity<ArticleResponse>
+
+    @Operation(summary = "게시글 좋아요 취소", security = [SecurityRequirement(name = "accessToken")])
+    fun cancelLikeArticle(@PathVariable articleId: Long): ResponseEntity<ArticleResponse>
+
     @Operation(summary = "게시글 단건 조회", security = [SecurityRequirement(name = "accessToken")])
     fun getArticle(@PathVariable articleId: Long): ResponseEntity<Any>
 

@@ -6,6 +6,7 @@ import boki.bokiportfolio.validator.ArticleValidator.INVALID_ARTICLE_CONTENT_MSG
 import boki.bokiportfolio.validator.ArticleValidator.INVALID_ARTICLE_TITLE_MSG
 import boki.bokiportfolio.validator.ArticleValidator.isValidContent
 import boki.bokiportfolio.validator.ArticleValidator.isValidTitle
+import boki.bokiportfolio.validator.SecurityManager.getAuthenticationName
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
@@ -57,6 +58,12 @@ data class ArticleResponse(
     @field:Schema(description = "조회수")
     val viewCnt: Int = 0,
 
+    @field:Schema(description = "좋아요 수")
+    val likeCnt: Int = 0,
+
+    @field:Schema(description = "좋아요 클릭 했는지 여부")
+    val hasLiked: Boolean = false,
+
     @field:Schema(description = "글 작성자(아이디)")
     val author: String,
 
@@ -83,6 +90,8 @@ data class ArticleResponse(
                 content = article.content,
                 imgFileName = article.imgFileName,
                 viewCnt = article.viewCnt,
+                likeCnt = article.likeUsers.size,
+                hasLiked = article.likeUsers.contains(getAuthenticationName().toLong()),
                 author = article.user.userId,
                 createdAt = article.createdAt,
                 updatedAt = article.updatedAt,

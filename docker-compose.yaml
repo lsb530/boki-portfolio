@@ -31,9 +31,9 @@ services:
   redis:
     image: redis
     container_name: redis_container
-    labels:
-      - "name=redis"
-      - "mode=standalone"
+#    labels:
+#      - "name=redis"
+#      - "mode=standalone"
     restart: always
     ports:
       - 6379:6379

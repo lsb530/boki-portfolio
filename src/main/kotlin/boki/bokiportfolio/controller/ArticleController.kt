@@ -72,6 +72,16 @@ class ArticleController(
         return ResponseEntity.ok().body(articleService.getArticles(title, createdAtSortDirection))
     }
 
+    @PatchMapping("/{article_id}/like")
+    override fun likeArticle(@PathVariable(name = "article_id") articleId: Long): ResponseEntity<ArticleResponse> {
+        return ResponseEntity.ok().body(articleService.likeArticle(articleId))
+    }
+
+    @PatchMapping("/{article_id}/cancel-like")
+    override fun cancelLikeArticle(@PathVariable(name = "article_id") articleId: Long): ResponseEntity<ArticleResponse> {
+        return ResponseEntity.ok().body(articleService.cancelLikeArticle(articleId))
+    }
+
     @GetMapping("/{article_id}")
     override fun getArticle(@PathVariable(name = "article_id") articleId: Long): ResponseEntity<Any> {
         val articleResponse = articleService.getArticle(articleId)
