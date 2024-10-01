@@ -108,7 +108,7 @@ class ArticleServiceTest : BehaviorSpec(
                     content = "테스트 내용",
                 )
 
-                When("❌- 로그인을 하지 않은 유저가 글을 수정하려 할 때") {
+                When("로그인을 하지 않은 유저가 글을 수정하려 할 때") {
                     Then("UNAUTHORIZED_ACCESS(인증 필요) 예외가 발생한다") {
                         val ex = shouldThrow<CustomException> {
                             articleService.updateArticle(request)
@@ -119,7 +119,7 @@ class ArticleServiceTest : BehaviorSpec(
                     }
                 }
 
-                When("❌- 존재하지 않는 게시글을 수정하려 할 때") {
+                When("존재하지 않는 게시글을 수정하려 할 때") {
                     SecurityHelper.injectSecurityContext(1L, Role.USER)
                     every { articleRepository.findByIdOrNull(request.id) } throws CustomException(ErrorCode.NOT_FOUND_ARTICLE)
 
@@ -134,7 +134,7 @@ class ArticleServiceTest : BehaviorSpec(
                     }
                 }
 
-                When("❌- 작성된 지 10일이 지난 게시글을 수정하려 할 때") {
+                When("작성된 지 10일이 지난 게시글을 수정하려 할 때") {
                     SecurityHelper.injectSecurityContext(1L, Role.USER)
 
                     val user = User(
@@ -171,7 +171,7 @@ class ArticleServiceTest : BehaviorSpec(
                     }
                 }
 
-                When("✅- 작성한 지 3일이 지난 게시글을 수정하려 할 때") {
+                When("작성한 지 3일이 지난 게시글을 수정하려 할 때") {
                     SecurityHelper.injectSecurityContext(1L, Role.USER)
 
                     val user = User(

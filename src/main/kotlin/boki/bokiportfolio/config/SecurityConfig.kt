@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@ConditionalOnProperty(name = ["server.port"], havingValue = "8080")
+@ConditionalOnProperty(name = ["server.port"], havingValue = "8090")
 class SecurityConfig(
     private val jwtAuthFilter: JwtAuthFilter,
     private val customAuthEntryPoint: CustomAuthenticationEntryPoint,
@@ -32,6 +32,11 @@ class SecurityConfig(
         "/login", // spring security default form login endpoint
         "/api/auth/login",
         "/api/auth/signup",
+        "/api/openfeign/time/**",
+        "/api/webclient/time/**",
+        "/api/rest-template/time/**",
+        "/api/rest-client/time/**",
+        "/api/http-interface/time/**",
     )
 
     @Bean
