@@ -17,5 +17,7 @@ boki:
     endpoint: "http://localhost:9000"
 #    bucket-name: "code-boki"
     bucket-name: "test"
-    access-key: u3wwfzmm1esw9NrSLBKo
-    secret-key: 9uqqlMo4ULvrU2Jjmkls4Jhmx5Nwnqwu06f9kdAT
+#    access-key: u3wwfzmm1esw9NrSLBKo
+#    secret-key: 9uqqlMo4ULvrU2Jjmkls4Jhmx5Nwnqwu06f9kdAT
+    access-key: ${MINIO_ROOT_USER}
+    secret-key: ${MINIO_ROOT_PASSWORD}

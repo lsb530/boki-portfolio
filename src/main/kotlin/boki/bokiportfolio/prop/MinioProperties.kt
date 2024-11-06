@@ -6,8 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class MinioProperties(
     val endpoint: String?,
     val bucketName: String?,
-    val accessKey: String?,
-    val secretKey: String?,
+    val accessKey: String? = System.getenv("MINIO_ROOT_USER"),
+    val secretKey: String? = System.getenv("MINIO_ROOT_PASSWORD"),
 ) {
     init {
         require(!endpoint.isNullOrBlank()) { "minIO의 endpoint는 비어있거나 빈 문자열일 수 없습니다" }
